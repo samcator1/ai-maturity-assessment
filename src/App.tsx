@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Radar, 
   RadarChart, 
@@ -23,22 +23,50 @@ import {
   Zap
 } from 'lucide-react';
 
+// --- TYPES ---
+interface Pillar {
+  id: string;
+  name: string;
+  icon: JSX.Element;
+}
+
+interface Question {
+  id: string;
+  pillar: string;
+  text: string;
+}
+
+interface RoadmapItem {
+  foundational: string;
+  integration: string;
+  advanced: string;
+}
+
+interface RoadmapActions {
+  [key: string]: RoadmapItem;
+}
+
+interface RoadmapPoint {
+  title: string;
+  text: string;
+}
+
 // --- DATA STRUCTURES ---
-const PILLARS = [
+const PILLARS: Pillar[] = [
   { id: 'cloud', name: 'Cloud Infrastructure', icon: <Network className="w-6 h-6" /> },
   { id: 'data', name: 'Data Engineering', icon: <Database className="w-6 h-6" /> },
   { id: 'semantics', name: 'Semantics & Ontology', icon: <Building2 className="w-6 h-6" /> },
   { id: 'ai', name: 'AI Strategy', icon: <BrainCircuit className="w-6 h-6" /> }
 ];
 
-const QUESTIONS = [
+const QUESTIONS: Question[] = [
   // Pillar 1: Cloud Infrastructure
   { id: 'c1', pillar: 'cloud', text: 'How is your core infrastructure currently hosted and managed?' },
   { id: 'c2', pillar: 'cloud', text: 'To what extent is your infrastructure provisioning automated (Infrastructure as Code)?' },
   { id: 'c3', pillar: 'cloud', text: 'How robust are your Disaster Recovery and high-availability implementations?' },
   { id: 'c4', pillar: 'cloud', text: 'How well integrated are your security and compliance protocols within the cloud environment?' },
   { id: 'c5', pillar: 'cloud', text: 'How dynamically does your infrastructure scale in response to operational network demand?' },
-  
+
   // Pillar 2: Data Engineering
   { id: 'd1', pillar: 'data', text: 'How automated and reliable are your data ingestion pipelines from field assets?' },
   { id: 'd2', pillar: 'data', text: 'How effectively do you monitor and maintain data quality across your platforms?' },
@@ -61,7 +89,7 @@ const QUESTIONS = [
   { id: 'a5', pillar: 'ai', text: 'How effectively do you measure and report the ROI of deployed machine learning solutions?' },
 ];
 
-const ROADMAP_ACTIONS = {
+const ROADMAP_ACTIONS: RoadmapActions = {
   cloud: {
     foundational: "Migrate legacy physical asset data to secure cloud environments. Establish basic landing zones.",
     integration: "Implement automated CI/CD for cloud environments and standardize Infrastructure as Code.",
@@ -85,9 +113,9 @@ const ROADMAP_ACTIONS = {
 };
 
 export default function App() {
-  const [view, setView] = useState('landing'); // landing, assessment, loading, results
+  const [view, setView] = useState<'landing' | 'assessment' | 'loading' | 'results'>('landing');
   const [currentPillar, setCurrentPillar] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const [answers, setAnswers] = useState<Record<string, number>>({});
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
 
   const loadingTexts = [
@@ -116,7 +144,7 @@ export default function App() {
 
   const handleStart = () => setView('assessment');
 
-  const handleAnswer = (questionId, score) => {
+  const handleAnswer = (questionId: string, score: number) => {
     setAnswers(prev => ({ ...prev, [questionId]: score }));
   };
 
@@ -180,7 +208,7 @@ export default function App() {
         Commence Assessment
         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
       </button>
-      
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 max-w-4xl w-full">
         {PILLARS.map(p => (
           <div key={p.id} className="flex flex-col items-center p-4 bg-white rounded-xl shadow-sm border border-slate-100">
@@ -223,7 +251,7 @@ export default function App() {
                 <span className="text-teal-600 font-bold">{idx + 1}.</span> 
                 {q.text}
               </p>
-              
+
               <div className="grid grid-cols-5 gap-2 md:gap-4">
                 {[1, 2, 3, 4, 5].map(score => {
                   const isSelected = answers[q.id] === score;
@@ -244,7 +272,7 @@ export default function App() {
                       {/* Sub-labels for clarity on the ends */}
                       {score === 1 && <span className="text-[10px] uppercase font-semibold mt-1 opacity-60 text-center leading-tight hidden md:block">Ad-hoc /<br/>Manual</span>}
                       {score === 5 && <span className="text-[10px] uppercase font-semibold mt-1 opacity-60 text-center leading-tight hidden md:block">Optimized /<br/>Leading</span>}
-                      
+
                       {isSelected && (
                         <div className="absolute -top-2 -right-2 bg-teal-600 text-white rounded-full p-0.5 shadow-sm">
                           <CheckCircle2 className="w-4 h-4" />
@@ -304,11 +332,11 @@ export default function App() {
 
   const renderResults = () => {
     const results = getResults();
-    
+
     // Dynamic Roadmap Logic
-    const h1Items = []; // < 3
-    const h2Items = []; // 3 or 4
-    const h3Items = []; // > 4
+    const h1Items: RoadmapPoint[] = []; // < 3
+    const h2Items: RoadmapPoint[] = []; // 3 or 4
+    const h3Items: RoadmapPoint[] = []; // > 4
 
     results.forEach(pillar => {
       const pId = pillar.id;
@@ -321,7 +349,7 @@ export default function App() {
 
     return (
       <div className="max-w-6xl mx-auto px-4 py-8 animate-in fade-in duration-1000">
-        
+
         {/* Dashboard Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
           <div>
@@ -378,7 +406,7 @@ export default function App() {
             <div className="bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-teal-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
               <h3 className="text-2xl font-bold mb-8 relative z-10">Strategic Roadmap to AI Maturity</h3>
-              
+
               <div className="space-y-8 relative z-10">
                 {/* Horizon 1 */}
                 <div className="relative pl-8 before:absolute before:left-3 before:top-2 before:bottom-[-2rem] before:w-0.5 before:bg-slate-700 last:before:hidden">
@@ -456,7 +484,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans selection:bg-teal-200 selection:text-teal-900">
+    <div className="min-h-screen bg-slate-50 font-sans selection:bg-teal-200 selection:text-teal-900 text-slate-900">
       {/* Top Navigation / Branding */}
       <header className="bg-slate-900 text-white p-5 shadow-md flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-3">
