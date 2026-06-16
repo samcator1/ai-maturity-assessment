@@ -486,7 +486,8 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans selection:bg-teal-200 selection:text-teal-900 text-slate-900">
       {/* Top Navigation / Branding */}
-      <header className="bg-slate-900 text-white p-5 shadow-md flex items-center justify-between sticky top-0 z-50">
+    <header className="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="bg-teal-600 p-2 rounded-lg">
             <ShieldCheck className="w-6 h-6 text-white" />
@@ -503,7 +504,8 @@ export default function App() {
              <span>Board-Level Summary</span>
            </div>
         )}
-      </header>
+      </div>
+    </header>
 
       {/* Main Content Area */}
       <main className="pb-20">
