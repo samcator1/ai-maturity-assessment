@@ -397,7 +397,6 @@ export default function App() {
   const handleNext = () => {
     if (currentPillar < PILLARS.length - 1) {
       setCurrentPillar(prev => prev + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       setView('loading');
     }
@@ -406,9 +405,12 @@ export default function App() {
   const handlePrev = () => {
     if (currentPillar > 0) {
       setCurrentPillar(prev => prev - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentPillar, view]);
 
   useEffect(() => {
     if (view === 'loading') {
