@@ -174,11 +174,110 @@
   @media (prefers-color-scheme: dark){.dbench{background:#dfeaf2}}
   .dbench::after{content:"peer";position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted);white-space:nowrap}
 
-  .focus-list{list-style:none;padding:0;margin:0;display:grid;gap:12px}
-  .focus-item{display:flex;gap:12px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px}
-  .focus-item .rank{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
-  .focus-item .fname{font-weight:650;font-size:14.5px;margin:0 0 2px}
-  .focus-item .fbody{font-size:13.5px;color:var(--muted);margin:0}
+  /* Focus Matrix Style */
+  .focus-matrix {
+    display: grid;
+    grid-template-columns: 240px 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+    align-items: stretch;
+  }
+  .matrix-header {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--border);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .matrix-header.phase-col {
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+  }
+  .matrix-dim-header {
+    grid-column: span 4;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--blue-ink);
+    background: var(--teal-soft);
+    padding: 8px 14px;
+    margin-top: 16px;
+    border-radius: 8px;
+    letter-spacing: 0.05em;
+  }
+  .matrix-q-cell {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .matrix-q-name {
+    font-weight: 650;
+    font-size: 13.5px;
+    color: var(--text);
+  }
+  .matrix-q-score {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+  .matrix-action-cell {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.45;
+    transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  }
+  .matrix-action-cell:hover {
+    border-color: var(--blue);
+    box-shadow: 0 4px 12px rgba(11,98,181,0.08);
+  }
+  .matrix-action-cell.p1 {
+    border-left: 4px solid var(--warn);
+  }
+  .matrix-action-cell.p2 {
+    border-left: 4px solid var(--blue);
+  }
+  .matrix-action-cell.p3 {
+    border-left: 4px solid var(--good);
+  }
+
+  @media (max-width: 900px) {
+    .focus-matrix {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .matrix-header {
+      display: none;
+    }
+    .matrix-dim-header {
+      grid-column: span 1;
+    }
+    .matrix-q-cell {
+      background: var(--surface-2);
+    }
+    .matrix-action-cell::before {
+      content: attr(data-phase-name) ": ";
+      font-weight: 700;
+      display: block;
+      margin-bottom: 4px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .matrix-action-cell.p1::before { color: var(--warn); }
+    .matrix-action-cell.p2::before { color: var(--blue); }
+    .matrix-action-cell.p3::before { color: var(--good); }
+  }
 
   .partner{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;border-radius:var(--radius);padding:26px 28px;margin-top:26px}
   .partner h4{color:#fff;font-size:18px;margin:0 0 8px}
@@ -993,56 +1092,54 @@
     var host = document.getElementById("focusList");
     host.innerHTML = "";
 
-    // Build the grid container
-    var grid = document.createElement("div");
-    grid.style.display = "grid";
-    grid.style.gridTemplateColumns = "repeat(3, 1fr)";
-    grid.style.gap = "20px";
-    grid.style.width = "100%";
-    grid.style.marginTop = "16px";
+    var matrix = document.createElement("div");
+    matrix.className = "focus-matrix";
 
     var phases = [
-      { key: "p1", name: "Phase 1 - Quick Wins", color: "var(--warn)" },
-      { key: "p2", name: "Phase 2 - Build Foundations", color: "var(--blue)" },
-      { key: "p3", name: "Phase 3 - Scale & Optimise", color: "var(--good)" }
+      { key: "p1", name: "Phase 1 - Quick Wins", color: "var(--warn)", class: "p1" },
+      { key: "p2", name: "Phase 2 - Build Foundations", color: "var(--blue)", class: "p2" },
+      { key: "p3", name: "Phase 3 - Scale & Optimise", color: "var(--good)", class: "p3" }
     ];
 
+    // 1. Render Headers
+    var headerHTML = '<div class="matrix-header">Focus Area / Question</div>';
     phases.forEach(function(phase){
-      var col = document.createElement("div");
-      col.style.background = "var(--surface-2)";
-      col.style.border = "1px solid var(--border)";
-      col.style.borderRadius = "var(--radius)";
-      col.style.padding = "20px";
-      col.style.display = "flex";
-      col.style.flexDirection = "column";
+      headerHTML += '<div class="matrix-header phase-col" style="border-bottom-color: ' + phase.color + '">' + phase.name + '</div>';
+    });
+    matrix.innerHTML = headerHTML;
 
-      var header = '<h5 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; color: ' + phase.color + '; border-bottom: 2px solid ' + phase.color + '; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">' + phase.name + '</h5>';
-      
-      var colContent = '';
-      DIMENSIONS.forEach(function(dim, di){
-        colContent += '<div style="margin-bottom: 18px;">';
-        colContent += '<div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 10px; letter-spacing: 0.03em;">' + dim.name + '</div>';
-        
-        dim.questions.forEach(function(q, qi){
-          var key = di + "-" + qi;
-          var score = answers[key] || 1;
-          var rec = ROADMAP_MAPPING[key][score];
-          var actionText = rec[phase.key];
-          
-          colContent += '<div style="margin-bottom: 12px; padding-left: 8px; border-left: 2px solid var(--border);">';
-          colContent += '<div style="font-weight: 650; font-size: 13px; color: var(--text);">' + q.short + ' <span style="font-weight: 400; color: var(--muted); font-size: 11px;">(Score: ' + score + '/5)</span></div>';
-          colContent += '<p style="margin: 3px 0 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.45;">' + actionText + '</p>';
-          colContent += '</div>';
+    // 2. Render each Dimension & its Questions
+    DIMENSIONS.forEach(function(dim, di){
+      // Dimension Header Row (spans all columns)
+      var dimRow = document.createElement("div");
+      dimRow.className = "matrix-dim-header";
+      dimRow.textContent = dim.name;
+      matrix.appendChild(dimRow);
+
+      dim.questions.forEach(function(q, qi){
+        var key = di + "-" + qi;
+        var score = answers[key] || 1;
+        var rec = ROADMAP_MAPPING[key][score];
+
+        // Question Cell (Left)
+        var qCell = document.createElement("div");
+        qCell.className = "matrix-q-cell";
+        qCell.innerHTML = '<span class="matrix-q-name">' + q.short + '</span>'
+                        + '<span class="matrix-q-score">Score: ' + score + '/5</span>';
+        matrix.appendChild(qCell);
+
+        // Action Cells (Right)
+        phases.forEach(function(phase){
+          var aCell = document.createElement("div");
+          aCell.className = "matrix-action-cell " + phase.class;
+          aCell.setAttribute("data-phase-name", phase.name);
+          aCell.textContent = rec[phase.key];
+          matrix.appendChild(aCell);
         });
-        
-        colContent += '</div>';
       });
-
-      col.innerHTML = header + colContent;
-      grid.appendChild(col);
     });
 
-    host.appendChild(grid);
+    host.appendChild(matrix);
   }
 
   // ---- email ----
