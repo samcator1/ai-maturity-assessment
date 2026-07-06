@@ -934,13 +934,13 @@
   }
 
   function buildRadar(perDim){
-    var cx=190, cy=180, R=125, N=perDim.length;
+    var cx=260, cy=190, R=125, N=perDim.length;
     function pt(i, val){
       var ang = -Math.PI/2 + i*(2*Math.PI/N);
       var r = R*(val/5);
       return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)];
     }
-    var svg = '<svg width="380" height="360" viewBox="0 0 380 360" role="img" aria-label="Radar chart of maturity scores">';
+    var svg = '<svg width="520" height="380" viewBox="0 0 520 380" role="img" aria-label="Radar chart of maturity scores">';
     // rings
     for(var lv=1; lv<=5; lv++){
       var pts=[];
