@@ -5,7 +5,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>AI Maturity Assessment — GHD Data &amp; Insights</title>
+<link rel="icon" type="image/x-icon" href="static/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="static/icon.svg">
 <style>
+  @font-face {
+    font-family: 'GHD Moderat';
+    src: url('static/fonts/GHD-Moderat-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'GHD Moderat';
+    src: url('static/fonts/GHD-Moderat-Regular-Italic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'GHD Moderat';
+    src: url('static/fonts/GHD-Moderat-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'GHD Moderat';
+    src: url('static/fonts/GHD-Moderat-Light-Italic.otf') format('opentype');
+    font-weight: 300;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'GHD Moderat';
+    src: url('static/fonts/GHD-Moderat-Black.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'GHD Moderat';
+    src: url('static/fonts/GHD-Moderat-Black-Italic.otf') format('opentype');
+    font-weight: 900;
+    font-style: italic;
+  }
+
   :root{
     --navy:#0a2e4d;
     --navy-2:#123f66;
@@ -41,7 +80,7 @@
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
-    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    font-family:'GHD Moderat','Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);
     color:var(--text);
     line-height:1.55;
@@ -57,10 +96,10 @@
   }
   header.top .wrap{padding-block:0}
   .brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  .logo{
-    font-weight:800;letter-spacing:.14em;font-size:22px;
-    background:#fff;color:var(--navy);
-    padding:6px 12px;border-radius:8px;line-height:1;
+  .logo-img{
+    height: 36px;
+    width: auto;
+    display: block;
   }
   .brand .unit{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#bfe6ea;font-weight:600}
   header.top h1{font-size:22px;margin:16px 0 4px;font-weight:700}
@@ -304,7 +343,7 @@
 <header class="top">
   <div class="wrap">
     <div class="brand">
-      <span class="logo">GHD</span>
+      <img src="static/GHD_White.png" alt="GHD Logo" class="logo-img">
       <span class="unit">Data &amp; Insights</span>
     </div>
     <h1>AI Maturity Assessment</h1>
