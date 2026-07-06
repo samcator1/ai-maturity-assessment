@@ -1,13 +1,1122 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Maturity Assessment</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="en-GB" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>AI Maturity Assessment — GHD Data &amp; Insights</title>
+<style>
+  :root{
+    --navy:#0a2e4d;
+    --navy-2:#123f66;
+    --blue:#0b62b5;
+    --blue-ink:#084a8c;
+    --teal:#0fb0bf;
+    --teal-soft:#e2f5f7;
+    --bg:#eef3f8;
+    --surface:#ffffff;
+    --surface-2:#f6f9fc;
+    --text:#132433;
+    --muted:#5b6b7a;
+    --border:#d7e0ea;
+    --track:#e6edf4;
+    --good:#1f9d6b;
+    --warn:#d98a1a;
+    --shadow:0 10px 30px rgba(10,46,77,.10);
+    --radius:16px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b1922;
+      --surface:#122636;
+      --surface-2:#0f2130;
+      --text:#e9f0f6;
+      --muted:#a2b3c2;
+      --border:#26404f;
+      --track:#1c3242;
+      --teal-soft:#123039;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px 64px}
+  .wrap.wide{max-width:1320px}
+  header.top{
+    background:linear-gradient(135deg,var(--navy),var(--navy-2));
+    color:#fff;
+    padding:26px 0 22px;
+    border-block-end:4px solid var(--teal);
+  }
+  header.top .wrap{padding-block:0}
+  .brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{
+    font-weight:800;letter-spacing:.14em;font-size:22px;
+    background:#fff;color:var(--navy);
+    padding:6px 12px;border-radius:8px;line-height:1;
+  }
+  .brand .unit{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#bfe6ea;font-weight:600}
+  header.top h1{font-size:22px;margin:16px 0 4px;font-weight:700}
+  header.top p{margin:0;color:#cfe0ee;font-size:14.5px;max-width:640px}
+
+  .progress-shell{margin:20px 0 8px;display:none}
+  .progress-shell.show{display:block}
+  .progress-meta{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-block-end:6px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+  .bar{height:8px;background:var(--track);border-radius:999px;overflow:hidden}
+  .bar > span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:999px;transition:width .35s ease}
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:30px;
+    margin-top:22px;
+  }
+  .screen{display:none}
+  .screen.active{display:block;animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  h2.section-title{font-size:20px;margin:0 0 4px;color:var(--text)}
+  .section-sub{margin:0 0 20px;color:var(--muted);font-size:14.5px}
+  .eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue-ink);background:var(--teal-soft);padding:5px 11px;border-radius:999px;margin-block-end:14px}
+
+  .lead{font-size:15.5px;color:var(--muted);margin:0 0 22px}
+  .lead strong{color:var(--text)}
+
+  .field{margin-block-end:18px}
+  .field label{display:block;font-weight:600;font-size:14px;margin-block-end:6px}
+  .field .hint{font-weight:400;color:var(--muted);font-size:12.5px}
+  input[type=text],input[type=email],select{
+    width:100%;padding:12px 14px;font-size:15px;font-family:inherit;
+    background:var(--surface-2);color:var(--text);
+    border:1px solid var(--border);border-radius:10px;
+  }
+  input:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(11,98,181,.15)}
+  .req{color:#c0392b}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:600px){.grid2{grid-template-columns:1fr}}
+
+  .q{padding:20px 0;border-block-end:1px solid var(--border)}
+  .q:last-child{border-block-end:none;padding-block-end:6px}
+  .q .qnum{font-size:12.5px;font-weight:700;color:var(--teal);letter-spacing:.05em}
+  .q .qtext{font-size:16px;font-weight:650;margin:4px 0 14px}
+  .opts{display:flex;flex-direction:column;gap:9px}
+  .opt{
+    display:flex;gap:12px;align-items:flex-start;
+    border:1.5px solid var(--border);border-radius:12px;
+    padding:12px 14px;cursor:pointer;background:var(--surface);
+    transition:border-color .15s,background .15s,box-shadow .15s;
+  }
+  .opt:hover{border-color:var(--blue)}
+  .opt input{margin-top:3px;accent-color:var(--blue);width:17px;height:17px;flex:0 0 auto}
+  .opt .lvl{font-weight:700;color:var(--blue-ink);font-size:13px;white-space:nowrap;margin-inline-end:2px}
+  .opt .otext{font-size:14px;color:var(--text)}
+  .opt.selected{border-color:var(--blue);background:var(--teal-soft);box-shadow:0 0 0 1px var(--blue) inset}
+
+  .nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:26px}
+  .btn{
+    font-family:inherit;font-size:15px;font-weight:650;cursor:pointer;
+    border:1px solid transparent;border-radius:10px;padding:12px 22px;
+    transition:transform .05s,filter .15s,background .15s;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue-ink));color:#fff}
+  .btn-primary:hover{filter:brightness(1.06)}
+  .btn-ghost{background:transparent;color:var(--muted);border-color:var(--border)}
+  .btn-ghost:hover{color:var(--text);border-color:var(--muted)}
+  .btn-teal{background:linear-gradient(135deg,var(--teal),#0a8f9c);color:#fff}
+  .btn-teal:hover{filter:brightness(1.06)}
+  .btn[disabled]{opacity:.5;cursor:not-allowed}
+  .nudge{color:#c0392b;font-size:13px;font-weight:600;margin-top:10px;display:none}
+  .nudge.show{display:block}
+
+  /* results */
+  .score-hero{display:flex;gap:26px;align-items:center;flex-wrap:wrap;padding:6px 0 4px}
+  .ring{position:relative;width:150px;height:150px;flex:0 0 auto}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .center .n{font-size:38px;font-weight:800;line-height:1;color:var(--navy)}
+  @media (prefers-color-scheme: dark){.ring .center .n{color:#eaf3f9}}
+  .ring .center .of{font-size:13px;color:var(--muted);margin-top:2px}
+  .hero-info{flex:1;min-width:240px}
+  .stage-badge{display:inline-block;font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:#fff;background:var(--blue);padding:5px 12px;border-radius:999px}
+  .hero-info h3{margin:12px 0 6px;font-size:22px}
+  .hero-info p{margin:0;color:var(--muted);font-size:14.5px}
+
+  .panel{margin-top:26px;padding-top:24px;border-top:1px solid var(--border)}
+  .panel h4{font-size:16px;margin:0 0 4px}
+  .panel .panel-sub{font-size:13px;color:var(--muted);margin:0 0 18px}
+
+  .radar-wrap{display:flex;gap:24px;flex-wrap:wrap;align-items:center;justify-content:center}
+  .radar-wrap svg{max-width:100%;height:auto}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:6px}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:22px;height:0;border-top:3px solid var(--blue)}
+  .sw.bench{border-top:3px dashed var(--teal)}
+
+  .dim-row{margin-block-end:16px}
+  .dim-head{display:flex;justify-content:space-between;align-items:baseline;margin-block-end:6px;gap:10px}
+  .dim-head .name{font-weight:650;font-size:14.5px}
+  .dim-head .val{font-size:13px;color:var(--muted);white-space:nowrap}
+  .dim-head .val b{color:var(--text);font-size:14px}
+  .dtrack{position:relative;height:12px;background:var(--track);border-radius:999px;overflow:visible}
+  .dfill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--teal))}
+  .dbench{position:absolute;top:-4px;width:2px;height:20px;background:var(--navy);border-radius:2px}
+  @media (prefers-color-scheme: dark){.dbench{background:#dfeaf2}}
+  .dbench::after{content:"peer";position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted);white-space:nowrap}
+
+  .focus-list{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+  .focus-item{display:flex;gap:12px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px}
+  .focus-item .rank{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+  .focus-item .fname{font-weight:650;font-size:14.5px;margin:0 0 2px}
+  .focus-item .fbody{font-size:13.5px;color:var(--muted);margin:0}
+
+  .partner{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;border-radius:var(--radius);padding:26px 28px;margin-top:26px}
+  .partner h4{color:#fff;font-size:18px;margin:0 0 8px}
+  .partner p{color:#d3e3f0;font-size:14.5px;margin:0 0 8px}
+  .partner .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .partner .tags span{font-size:12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:5px 11px;border-radius:999px}
+
+  .result-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+  .disclaimer{font-size:12px;color:var(--muted);margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+  .sent-note{font-size:13px;color:var(--good);font-weight:600;margin-top:12px;display:none}
+  .sent-note.show{display:block}
+
+  footer.foot{text-align:center;color:var(--muted);font-size:12.5px;margin-top:30px}
+
+  @media print{
+    header.top{background:var(--navy) !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .nav,.result-actions,.progress-shell{display:none !important}
+    .card{box-shadow:none;border-color:#ccc}
+    body{background:#fff}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <span class="logo">GHD</span>
+      <span class="unit">Data &amp; Insights</span>
+    </div>
+    <h1>AI Maturity Assessment</h1>
+    <p>A quick, jargon-free way to gauge where your organisation stands on its data &amp; AI journey — and see how you compare with peers across UK infrastructure.</p>
+  </div>
+</header>
+
+<div class="wrap" id="mainWrap">
+  <div class="progress-shell" id="progressShell">
+    <div class="progress-meta"><span id="progressLabel">Section 1 of 6</span><span id="progressPct">0%</span></div>
+    <div class="bar"><span id="progressFill"></span></div>
+  </div>
+
+  <!-- INTRO -->
+  <section class="screen active card" id="screen-intro" data-screen="intro">
+    <span class="eyebrow">About 5 minutes • 21 questions</span>
+    <p class="lead">This assessment is a conversation starter, not a technical audit. Answer as the person who knows the business — <strong>there are no wrong answers</strong>. At the end you'll get an instant maturity snapshot, a peer benchmark, and the priorities that would move you forward fastest.</p>
+
+    <div class="field">
+      <label for="org">Organisation name <span class="req">*</span></label>
+      <input type="text" id="org" autocomplete="organization" placeholder="e.g. National Highways">
+      <div class="nudge" id="orgNudge">Please add your organisation name to begin.</div>
+    </div>
+
+    <div class="field">
+      <label for="sector">Sector <span class="hint">— helps set your benchmark</span></label>
+      <select id="sector">
+        <option value="">Select your sector…</option>
+        <option>Rail</option>
+        <option>Highways &amp; Roads</option>
+        <option>Water &amp; Wastewater</option>
+        <option>Energy &amp; Utilities</option>
+        <option>Aviation &amp; Airports</option>
+        <option>Ports &amp; Maritime</option>
+        <option>Telecoms &amp; Digital Infrastructure</option>
+        <option>Local / Regional Government</option>
+        <option>Other infrastructure</option>
+      </select>
+    </div>
+
+    <div class="grid2">
+      <div class="field">
+        <label for="name">Your name <span class="hint">— optional</span></label>
+        <input type="text" id="name" autocomplete="name" placeholder="Optional">
+      </div>
+      <div class="field">
+        <label for="email">Your email <span class="hint">— optional</span></label>
+        <input type="email" id="email" autocomplete="email" placeholder="Optional">
+      </div>
+    </div>
+
+    <div class="nav">
+      <span></span>
+      <button class="btn btn-primary" id="startBtn">Start assessment →</button>
+    </div>
+  </section>
+
+  <!-- QUESTION SECTIONS injected here -->
+  <div id="sections"></div>
+
+  <!-- RESULTS -->
+  <section class="screen card" id="screen-results" data-screen="results">
+    <span class="eyebrow">Your results</span>
+    <h2 class="section-title" id="resOrgTitle">Your AI maturity snapshot</h2>
+    <p class="section-sub" id="resMeta"></p>
+
+    <div class="score-hero">
+      <div class="ring">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r="64" fill="none" stroke="var(--track)" stroke-width="14"></circle>
+          <circle id="ringArc" cx="75" cy="75" r="64" fill="none" stroke="url(#rg)" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 999"></circle>
+          <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b62b5"></stop><stop offset="1" stop-color="#0fb0bf"></stop></linearGradient></defs>
+        </svg>
+        <div class="center"><span class="n" id="ringNum">0</span><span class="of">of 5</span></div>
+      </div>
+      <div class="hero-info">
+        <span class="stage-badge" id="stageBadge">Stage —</span>
+        <h3 id="stageName">—</h3>
+        <p id="stageDesc">—</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h4>How you score across the six foundations</h4>
+      <p class="panel-sub">Your organisation (solid) vs an indicative peer benchmark for UK infrastructure (dashed).</p>
+      <div class="radar-wrap">
+        <div id="radar"></div>
+      </div>
+      <div class="legend">
+        <span><span class="sw"></span> Your organisation</span>
+        <span><span class="sw bench"></span> Indicative peer benchmark</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h4>Foundation by foundation</h4>
+      <p class="panel-sub">Each area scored from 1 (just starting) to 5 (leading).</p>
+      <div id="dimBars"></div>
+    </div>
+
+    <div class="panel">
+      <h4>Where to focus first</h4>
+      <p class="panel-sub">Based on your lowest-scoring areas — the biggest opportunities to build momentum.</p>
+      <div id="focusList"></div>
+    </div>
+
+
+
+    <div class="result-actions">
+      <button class="btn btn-teal" id="emailBtn">✉ Email my results to GHD</button>
+      <button class="btn btn-ghost" id="printBtn">Print / save as PDF</button>
+      <button class="btn btn-ghost" id="restartBtn">Start again</button>
+    </div>
+    <div class="sent-note" id="sentNote">Your email app should now be open with your results ready to send to dandai@ghd.com. If nothing opened, use Print / save as PDF instead.</div>
+
+    <p class="disclaimer">The peer benchmark shown is indicative — a typical maturity range GHD observes across UK infrastructure organisations — and is provided to prompt discussion, not as a precise industry statistic. Your responses stay in your browser until you choose to email them.</p>
+  </section>
+
+  <footer class="foot">GHD Data &amp; Insights · AI Maturity Assessment</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var DIMENSIONS = [
+    {
+      id:"cloud", label:"Infrastructure", name:"Data & Infrastructure Foundations",
+      intro:"Where your data lives, and the computing power behind it.",
+      benchmark:2.6,
+      questions:[
+        { short:"Central data storage",
+          text:"How centralized is your primary asset, spatial, and operational data?",
+          levels:[
+            "Scattered across individual spreadsheets, local drives, or disconnected local servers.",
+            "Mostly stored in separate team silos or isolated databases with no central collection point.",
+            "A hybrid mix — some core data is brought together in a central system (on-premise or cloud), but many silos remain.",
+            "Consolidated in a central data platform (on-premise or secure cloud) that acts as our main source of truth.",
+            "Fully integrated in a high-performance central data platform that scales automatically to handle complex workloads (like real-time sensors)."
+          ]},
+        { short:"Access to computing power",
+          text:"When you need serious computing power for a big analysis or model, how do you get it?",
+          levels:[
+            "We don't run heavy analysis — our machines couldn't handle it.",
+            "We rely on a few powerful desktops or a single server, and big jobs take a long time or get queued.",
+            "We have shared servers, but scaling up for a large project needs manual setup and budget sign-off.",
+            "We can spin up extra computing power (cloud or central servers) on demand for most projects with little friction.",
+            "Computing power scales automatically and instantly to whatever a workload needs, and we only pay for what we use."
+          ]},
+        { short:"Data access & security",
+          text:"How securely and easily can data be accessed by internal teams or authorized external organizations?",
+          levels:[
+            "Data sharing is entirely manual (e.g., emailing spreadsheets or copying to USBs).",
+            "Access requires slow, restrictive IT approvals or complex VPN setups that make collaboration difficult.",
+            "Standard access controls exist, but permissions are slow to set up and data sharing between departments is rare.",
+            "Secure, role-based controls allow smooth internal sharing and governed external access.",
+            "A modern, secure API-driven network allows authorized staff and software tools to access data instantly."
+          ]},
+        { short:"Systems joined up",
+          text:"How joined-up are your core systems (asset management, finance, GIS, maintenance, and so on)?",
+          levels:[
+            "Every system is separate — moving data between them means manual exports and re-keying.",
+            "A couple of systems are linked, but most operate in their own silos.",
+            "Key systems share data through some integrations, though gaps and manual steps remain.",
+            "Most systems are connected through standard interfaces, so data flows with little manual effort.",
+            "All systems are seamlessly integrated in near real time, giving one connected view of the organisation."
+          ]}
+      ]
+    },
+    {
+      id:"data", label:"Data", name:"Data Foundations & Governance",
+      intro:"Whether your data is easy to find, trustworthy, and well looked after.",
+      benchmark:2.4,
+      questions:[
+        { short:"Finding & accessing data",
+          text:"How easily can your teams find and access the data they need to do their jobs?",
+          levels:[
+            "Finding data is hard — people rely on who they know or personal file stores.",
+            "Data exists but is scattered; access often means emailing whoever 'owns' it.",
+            "Important datasets are in known locations, but access can be slow or inconsistent.",
+            "Most data is discoverable through shared platforms with clear, managed access.",
+            "Anyone with the right permissions can find and use trusted data instantly through self-service."
+          ]},
+        { short:"Data quality & trust",
+          text:"How confident are you in the quality and accuracy of your data?",
+          levels:[
+            "We often don't trust our data and spend a lot of time cleaning or double-checking it.",
+            "Quality varies a lot between systems, and problems are usually found by accident.",
+            "Key datasets are reasonably reliable, but quality isn't consistently monitored.",
+            "We actively monitor and manage data quality for our important datasets.",
+            "Data quality is automatically checked, measured, and maintained across the organisation."
+          ]},
+        { short:"Ownership & governance",
+          text:"Who is responsible for your data, and how is it governed?",
+          levels:[
+            "No one really owns it, and there are no clear rules for how data is managed.",
+            "Ownership is informal and sits with a few individuals; policies are patchy.",
+            "Some data ownership and governance policies exist, but aren't consistently applied.",
+            "Clear data owners and governance policies are in place and mostly followed.",
+            "Governance is embedded everywhere, with clear ownership, standards, and accountability across the business."
+          ]}
+      ]
+    },
+    {
+      id:"semantic", label:"Common Language", name:"A Common Language for Data",
+      intro:"Whether everyone — and every system — means the same thing by the same words, and how well your data is connected.",
+      benchmark:2.0,
+      questions:[
+        { short:"Shared definitions",
+          text:"Does your organisation share an agreed definition of key terms — for example, what exactly counts as an 'asset', a 'defect', or an 'incident'?",
+          levels:[
+            "Definitions vary from team to team, so the same word can mean different things.",
+            "A few teams have their own definitions, but there's no organisation-wide agreement.",
+            "We've agreed definitions for some core terms, but they aren't used everywhere.",
+            "Standard definitions for key business terms are documented and widely used.",
+            "A shared business vocabulary is built into our systems, so everyone and every system means the same thing."
+          ]},
+        { short:"Data catalogued & documented",
+          text:"Is your data catalogued and documented, so people understand what it means and where it comes from?",
+          levels:[
+            "There's no catalogue — you have to ask someone to understand what a dataset contains.",
+            "A few teams keep their own notes or spreadsheets describing their data.",
+            "We have partial documentation for the most important datasets.",
+            "A central data catalogue describes most datasets, their meaning, and their source.",
+            "A living catalogue automatically documents data, its meaning, lineage, and quality across the business."
+          ]},
+        { short:"Asset & Digital Twin links",
+          text:"How well connected are your physical assets to their spatial locations, work orders, and maintenance history (like a Digital Twin representation)?",
+          levels:[
+            "Asset details, spatial location (GIS), and maintenance histories sit in separate, unconnected spreadsheets or systems.",
+            "Some basic connections exist (like listing an asset's approximate site), but linking them together requires manual, time-consuming effort.",
+            "Core systems are integrated, but asset metadata, GIS coordinates, and work orders frequently drift out of sync.",
+            "We have a unified digital representation that links assets, spatial data, and work history, allowing us to easily trace costs and failure trends.",
+            "A living Digital Twin connects physical assets, live operational feeds, spatial data, and work history for real-time tracking and simulation."
+          ]},
+        { short:"Shared terms & categories",
+          text:"Do different departments use the same names, category labels, and file formats for identical things so data is easy to share?",
+          levels:[
+            "No; every department has its own way of naming things and using files, requiring manual work to join them together.",
+            "A few teams name things similarly, but most departments use their own terms and formats, making sharing clunky.",
+            "We have agreed on standard terms or file types for some key items, which makes sharing easier in specific areas.",
+            "A single, organisation-wide set of naming rules and categories is enforced internally, so data is understood by everyone.",
+            "We use standardized industry-wide naming and file systems, so data moves between internal and external systems automatically."
+          ]}
+      ]
+    },
+    {
+      id:"ai", label:"Analytics & AI", name:"Analytics & AI in Action",
+      intro:"How you turn data into decisions today — from looking back to acting ahead.",
+      benchmark:2.3,
+      questions:[
+        { short:"How data is used",
+          text:"How does your organisation mainly use data today?",
+          levels:[
+            "Mostly to look back — basic reports on what already happened.",
+            "We produce dashboards and regular reports, but they mainly describe the past.",
+            "We're starting to spot trends and do some forecasting.",
+            "We regularly predict what's likely to happen (for example, which assets may fail) and plan around it.",
+            "Our systems recommend or automate the best actions, not just predict outcomes."
+          ]},
+        { short:"Basis for decisions",
+          text:"When it comes to important decisions, what do they tend to be based on?",
+          levels:[
+            "Mostly experience and gut feel — data rarely comes into it.",
+            "Data is used occasionally, but decisions are largely based on judgement.",
+            "Data informs many decisions, alongside experience.",
+            "Most significant decisions are backed by data and analysis.",
+            "Data and AI are central to decision-making at every level, from the front line to the board."
+          ]},
+        { short:"AI-driven decisions",
+          text:"How much operational decision-making is driven directly by AI or machine learning (e.g., algorithms scheduling maintenance, dispatching crews, or adjusting valves), rather than just humans using chatbots (like ChatGPT) to draft emails?",
+          levels:[
+            "None; we do not use any operational AI or machine learning (humans make all decisions manually).",
+            "We are trialing pilot programs where algorithms suggest decisions (e.g., predicting which asset to inspect next), but nothing is live yet.",
+            "In a few specific areas, live algorithms actively recommend decisions that humans then review and approve (e.g., generating work schedules).",
+            "AI supports multiple core operations, with models suggesting optimized decisions and actions that guide our daily work.",
+            "AI autonomously makes and executes key operational decisions in real-time (e.g., automatically dispatching crews to high-risk defects or optimizing system operations)."
+          ]}
+      ]
+    },
+    {
+      id:"people", label:"People & Skills", name:"People, Skills & Culture",
+      intro:"The skills, confidence, and capacity you have to deliver data & AI.",
+      benchmark:2.5,
+      questions:[
+        { short:"Engineering & analytics skills",
+          text:"How would you describe your organisation's internal skills in data engineering and data analytics?",
+          levels:[
+            "We have no data engineering or analytics skills; data work is limited to basic spreadsheet entries.",
+            "We have basic skills to build spreadsheets and reports, but no capability for database management or automated pipelines.",
+            "We can manage basic databases and build reports, but we lack advanced data engineering (pipeline automation) or data science skills.",
+            "We have strong capability in data engineering (building automated pipelines) and analytics, allowing us to deliver standard reporting.",
+            "We possess advanced data engineering and data science capabilities, allowing us to build real-time systems and train custom models."
+          ]},
+        { short:"Cloud & platform skills",
+          text:"How would you describe your organisation's internal skills in setting up, maintaining, and automating your cloud and data platforms (cloud and platform engineering)?",
+          levels:[
+            "None; we rely completely on basic office IT or external companies to set up any servers or storage.",
+            "We can manage basic servers or files, but we cannot set up or customize secure cloud platforms ourselves.",
+            "We can configure standard cloud environments manually, but we struggle to automate setups or handle complex infrastructure.",
+            "We have dedicated platform engineers who automate and manage our secure data hosting environments.",
+            "We have advanced platform capability, using fully automated pipelines to run and secure our high-performance infrastructure."
+          ]},
+        { short:"In-house delivery capability",
+          text:"Do you have the in-house skills and capacity to deliver AI projects?",
+          levels:[
+            "No — we'd have to start from scratch or rely entirely on outside help.",
+            "We have a little capability, but rely heavily on external support.",
+            "We have a small internal team that handles core needs with some external help.",
+            "We have a capable internal team and bring in external support for specialist work.",
+            "We have deep, specialist in-house expertise and bring in external specialists strategically to scale."
+          ]}
+      ]
+    },
+    {
+      id:"strategy", label:"Strategy & Investment", name:"Strategy, Investment & Responsible AI",
+      intro:"Whether data & AI are backed by leadership, funded, governed responsibly, and measured.",
+      benchmark:2.4,
+      questions:[
+        { short:"Investment in data & AI",
+          text:"How much is your organisation investing in data and AI?",
+          levels:[
+            "Little or no dedicated budget — spending is ad hoc.",
+            "Small, one-off pockets of funding for specific projects.",
+            "A modest, regular budget exists, but is often first to be cut.",
+            "Data and AI have a protected, growing budget seen as an investment.",
+            "Significant, sustained investment treats data and AI as strategic priorities."
+          ]},
+        { short:"Strategy & leadership backing",
+          text:"Is there a clear data and AI strategy, backed by senior leadership?",
+          levels:[
+            "No strategy — leadership sees data as an IT or back-office matter.",
+            "There's interest at the top, but no clear plan or ownership.",
+            "A strategy is emerging and has some leadership support.",
+            "A clear strategy is in place with active senior sponsorship.",
+            "Data and AI are central to our corporate strategy and championed from the very top."
+          ]},
+        { short:"Responsible, safe & secure AI",
+          text:"How do you make sure AI and data are used responsibly, safely, and securely?",
+          levels:[
+            "We haven't considered this yet.",
+            "We rely on general IT security — there are no specific data or AI safeguards.",
+            "Some policies exist for privacy and security, but nothing specific to AI.",
+            "We have clear guidelines covering data protection, security, and responsible AI use.",
+            "Responsible-AI, ethics, and security controls are built into everything we do and regularly reviewed."
+          ]},
+        { short:"Measuring value / ROI",
+          text:"How do you measure the value or return you get from data and AI?",
+          levels:[
+            "We don't measure it.",
+            "We track activity (such as projects delivered), but not real outcomes.",
+            "We measure benefits for some initiatives after they finish.",
+            "We set clear targets and track the value most initiatives deliver.",
+            "Value is measured continuously and shapes where we invest next."
+          ]}
+      ]
+    }
+  ];
+
+  var STAGES = {
+    1:{ name:"Nascent", desc:"Foundations are just forming. Data is fragmented and manual, and AI isn't yet in play. The biggest, fastest wins come from getting the basics right — consolidating data, organizing your infrastructure, and agreeing a common language." },
+    2:{ name:"Developing", desc:"You've started building foundations, with pockets of good practice — but they're inconsistent. Focus on joining systems up, improving data quality and governance, and running first AI pilots tied to clear value." },
+    3:{ name:"Established", desc:"You have connected systems and reliable data in key areas, and analytics is informing decisions. Now's the time to scale AI from pilots into production and invest in the semantic layer that links your data together." },
+    4:{ name:"Advanced", desc:"You're genuinely data-driven, with AI supporting several important processes and strong governance behind it. Push towards prediction and automation at scale, embed responsible-AI, and measure value continuously." },
+    5:{ name:"Leading", desc:"You're AI-native — data and AI are core to how you run and maintain your assets. The focus now is staying ahead: continuous innovation, sector leadership, and compounding the value you've built." }
+  };
+
+  var ROADMAP_MAPPING = {
+    // Dimension 1: Infrastructure
+    "0-0": { // Q1: Central data storage
+      1: { p1: "Audit where your main spreadsheets and files are stored across teams.", p2: "Set up a shared network drive or basic cloud storage folder for all critical asset lists.", p3: "Consolidate these files into a single, standardized central database." },
+      2: { p1: "List all disconnected team databases and note who manages them.", p2: "Establish a central storage repository (on-premise or secure cloud) and copy key data over.", p3: "Shut down the local silos and make the central platform the single source of truth." },
+      3: { p1: "Identify the main data syncing delays between your siloed and central databases.", p2: "Set up automated daily scripts to import and sync data from team silos to the central store.", p3: "Expose central data to business teams via unified query portals." },
+      4: { p1: "Review data access speeds and processing limits on your central platform.", p2: "Optimize database performance and index key tables to handle larger spatial datasets.", p3: "Transition to a fully scalable architecture that adjusts automatically to sensor feeds." },
+      5: { p1: "Document cost-performance trade-offs for your auto-scaling systems.", p2: "Set up automatic cost controls and alerts on your central data platform.", p3: "Share templates and architecture patterns with other business units." }
+    },
+    "0-1": { // Q2: Access to computing power
+      1: { p1: "List any analytical projects that were cancelled or delayed due to slow PCs.", p2: "Identify a central desktop or server that can be shared for running large calculations.", p3: "Set up a virtual server environment that multiple analysts can access." },
+      2: { p1: "Document the queue times and processing bottlenecks on your single shared server.", p2: "Upgrade the memory and processor on your primary database server.", p3: "Establish clear scheduling rules for large analysis runs to prevent server crashes." },
+      3: { p1: "Estimate the budget needed to scale up server capacity for upcoming asset reviews.", p2: "Create a fast-track process for analysts to temporarily increase server resources.", p3: "Set up secure virtual machines that can scale up dynamically during heavy runs." },
+      4: { p1: "Track server usage spikes to identify when resources are wasted or idle.", p2: "Migrate heavy modeling workloads to modern, flexible on-demand computing services.", p3: "Implement auto-scaling rules to shut down servers when runs complete." },
+      5: { p1: "Perform a security audit on your dynamic computing resource access.", p2: "Refine auto-scaling configurations to optimize computation cost and run speeds.", p3: "Enable automated environment spin-ups for testing new data science models." }
+    },
+    "0-2": { // Q3: Data access & security
+      1: { p1: "Stop sharing password-protected spreadsheets over public email; use basic shared drives.", p2: "Draft a basic access policy defining who is allowed to view key asset lists.", p3: "Set up simple user logins for your primary database instead of sharing a single account." },
+      2: { p1: "Identify which teams are currently bypassed by IT security due to VPN issues.", p2: "Configure standard role-based logins (e.g. Viewer vs. Editor) in your storage systems.", p3: "Streamline VPN access pathways for remote workers to reduce access friction." },
+      3: { p1: "Audit the list of active user permissions to remove old employees or contractors.", p2: "Implement single-sign-on (SSO) to sync database access with corporate emails.", p3: "Create a governed external sharing process to securely send data to trusted external organisations." },
+      4: { p1: "Identify manual steps in how data is requested and approved across departments.", p2: "Build secure, read-only data connections (APIs) for internal software systems.", p3: "Establish an API portal allowing governed external access to authorized organizations." },
+      5: { p1: "Review compliance reports for your data API endpoints.", p2: "Move to a full Zero-Trust security model where every system connection is verified.", p3: "Automate security logging and threat detection across all data access routes." }
+    },
+    "0-3": { // Q4: Systems joined up
+      1: { p1: "List the main copy-paste steps required to move data from GIS to finance or maintenance.", p2: "Create standard spreadsheet templates so data format matches across teams.", p3: "Build simple automated file-transfer tasks to share records between key systems." },
+      2: { p1: "Identify the two systems where manual data entry causes the most errors.", p2: "Set up automated nightly data exports and imports between your GIS and ERP.", p3: "Create validation checks to alert staff when system data falls out of sync." },
+      3: { p1: "Map out the full lifecycle of an asset record across GIS, finance, and maintenance.", p2: "Establish automated data connectors (APIs) to sync updates across core systems daily.", p3: "Implement a tracking system to flag and resolve discrepancies between databases." },
+      4: { p1: "Identify which system integrations require manual reconciliations.", p2: "Upgrade integrations to real-time sync for critical systems (e.g., maintenance triggering GIS).", p3: "Create a single dashboard displaying data feeds from all major operational platforms." },
+      5: { p1: "Conduct a latency audit across your integrated system endpoints.", p2: "Implement an event-driven integration layer to broadcast changes instantly to all systems.", p3: "Open secure data feeds to external client systems automatically." }
+    },
+    // Dimension 2: Data Foundations
+    "1-0": { // Q5: Finding & accessing data
+      1: { p1: "Ask teams to list their top 5 most-used spreadsheets and where they keep them.", p2: "Put these critical files in a single, pinned folder on a shared drive.", p3: "Set up a simple read-only access folder for other departments." },
+      2: { p1: "Create a simple directory document listing where key asset databases are stored.", p2: "Set up a shared intranet page with direct links to all core databases.", p3: "Implement a standard request form so staff can quickly ask database owners for access." },
+      3: { p1: "Identify the top 3 datasets that staff struggle to locate or access.", p2: "Create a simple search page or wiki cataloging available data tables.", p3: "Automate the request-and-approval flow for standard department databases." },
+      4: { p1: "Collect feedback on search filters and usability in your current data portal.", p2: "Consolidate all corporate metadata into an interactive data catalog.", p3: "Implement self-service access controls where staff can request and gain access in minutes." },
+      5: { p1: "Audit automated access logs for compliance.", p2: "Implement AI-driven metadata suggestions to catalog new datasets automatically.", p3: "Enable data-sharing agreements that grant automatic workspace access to other companies." }
+    },
+    "1-1": { // Q6: Data quality & trust
+      1: { p1: "Identify the most common error in your asset spreadsheets (e.g., blank cells).", p2: "Add validation rules (drop-downs) to spreadsheets to prevent bad data entry.", p3: "Run a one-time clean-up script to fix legacy errors in core columns." },
+      2: { p1: "Document the errors that routinely break monthly reports.", p2: "Set up simple script checks to validate file uploads before they are imported.", p3: "Assign a coordinator to review and fix data anomalies reported by users." },
+      3: { p1: "Identify which datasets suffer from the worst drift or out-of-date records.", p2: "Define clear quality thresholds (e.g., location must be within 5 meters).", p3: "Schedule weekly automated quality reports that flag anomalies to data owners." },
+      4: { p1: "Map out quality trends over time to identify repeat error sources.", p2: "Deploy automated data-observability tools to track quality at every pipeline stage.", p3: "Create dashboards displaying real-time quality scores for every database." },
+      5: { p1: "Review root-cause trends for persistent quality issues.", p2: "Implement automated self-healing scripts that quarantine and repair minor data faults.", p3: "Link quality metrics to performance incentives for data owners." }
+    },
+    "1-2": { // Q7: Ownership & governance
+      1: { p1: "Assign a specific owner to the master asset spreadsheet.", p2: "Draft a 1-page rulebook on how files should be named and updated.", p3: "Gather database owners for a monthly meeting to coordinate updates." },
+      2: { p1: "Identify who is currently updating databases without clear authorization.", p2: "Assign formal data stewards to each primary system.", p3: "Draft basic data security and compliance policies for staff." },
+      3: { p1: "Document where data ownership rules conflict between departments.", p2: "Establish a formal data governance committee with representatives from all teams.", p3: "Publish a clear register of data owners, stewards, and escalation paths." },
+      4: { p1: "Review which data policies are bypassed in day-to-day operations.", p2: "Enforce standard data lifecycle reviews (from creation to archive) across all systems.", p3: "Train stewards on data compliance, privacy laws, and security standards." },
+      5: { p1: "Audit governance compliance across all systems automatically.", p2: "Integrate compliance checking into automated system release pipelines.", p3: "Embed data ethics and governance reviews into all business strategy planning." }
+    },
+    // Dimension 3: Common Language
+    "2-0": { // Q8: Shared definitions
+      1: { p1: "List 5 key terms that different teams define differently (e.g. 'active asset').", p2: "Draft a simple 1-page glossary defining these terms.", p3: "Share the glossary with team leads and get agreement on definitions." },
+      2: { p1: "Document instances where different database columns use different words for the same thing.", p2: "Build a central business glossary containing agreed definitions.", p3: "Ensure new database projects use these glossary definitions." },
+      3: { p1: "Find databases where old schemas use conflicting definitions.", p2: "Integrate the glossary into database design standards and project briefs.", p3: "Update legacy databases to match the agreed definitions." },
+      4: { p1: "Identify terms that require sector-wide alignment (e.g., industry standards).", p2: "Deploy a central glossary tool linked to your data catalog.", p3: "Train all project managers to align new schemas to the glossary." },
+      5: { p1: "Review vocabulary drift in new database schemas.", p2: "Deploy a metadata layer that translates system terms to glossary terms automatically.", p3: "Contribute to industry standard bodies to align definitions." }
+    },
+    "2-1": { // Q9: Data catalogued & documented
+      1: { p1: "Write a simple readme file explaining what your main asset spreadsheet contains.", p2: "Add descriptions to all column headers in the master list.", p3: "Create a shared folder containing readme files for your top 5 databases." },
+      2: { p1: "Identify who is currently running database queries without documentation.", p2: "Create standard data dictionaries for key databases.", p3: "Store data dictionaries in a central, searchable wiki for analysts." },
+      3: { p1: "Locate undocumented legacy tables that are still in active use.", p2: "Deploy a basic data catalog software to store dictionaries.", p3: "Require all new data pipelines to include complete documentation." },
+      4: { p1: "Check for missing lineage data in your catalog (where data comes from).", p2: "Implement automated cataloging to scan databases and extract schemas.", p3: "Map data lineage from source systems to dashboards within the catalog." },
+      5: { p1: "Review schema drift alerts in your data catalog.", p2: "Enable automated, continuous cataloging that updates metadata in real time.", p3: "Expose catalog APIs so AI models can read documentation to write queries." }
+    },
+    "2-2": { // Q10: Asset & Digital Twin links
+      1: { p1: "List the different asset ID codes used in GIS, maintenance, and finance.", p2: "Create a lookup table mapping different ID codes to identical physical assets.", p3: "Ensure new asset entries use a single, unified ID across all systems." },
+      2: { p1: "Identify where asset maintenance records are missing spatial (GIS) coordinates.", p2: "Link asset IDs in your work order system to their GIS locations.", p3: "Set up standard database keys to join asset details to work histories." },
+      3: { p1: "Identify why asset coordinates drift out of sync between GIS and maintenance databases.", p2: "Establish daily syncing pipelines between GIS and asset registers.", p3: "Deploy validation scripts to flag disconnected records or spatial gaps." },
+      4: { p1: "Check for missing asset components in the unified model.", p2: "Build a single dashboard displaying physical asset details, GIS location, and work history.", p3: "Standardize asset modeling formats (e.g., BIM) for new projects." },
+      5: { p1: "Review processing speed of live coordinate syncs.", p2: "Deploy a real-time Digital Twin schema connecting physical records with sensor feeds.", p3: "Use the Digital Twin to run simulations and predict system-wide impacts." }
+    },
+    "2-3": { // Q11: Shared terms & categories
+      1: { p1: "List the file types (Excel, CSV, Shapefiles) used across departments.", p2: "Standardize on common export file formats (e.g. CSV or JSON) for data sharing.", p3: "Enforce standard folder structures for sharing files between teams." },
+      2: { p1: "Identify the columns where naming styles conflict (e.g., Date vs. Date_Created).", p2: "Define standard naming rules for files and data columns.", p3: "Set up basic data validation check lists for file transfers." },
+      3: { p1: "Identify manual translation steps in sharing files across departments.", p2: "Deploy standard exchange schemas for key data sharing activities.", p3: "Train internal teams to deliver data matching your naming standards." },
+      4: { p1: "Check compliance of new database columns with internal standards.", p2: "Deploy automated schema checkers to block files that violate naming rules.", p3: "Adopt international data models (e.g., building or GIS standard schemas) internally." },
+      5: { p1: "Review standards alignment across systems.", p2: "Automate schema mapping using AI to translate between internal and external formats.", p3: "Enforce automated compliance with international open data standards." }
+    },
+    // Dimension 4: Analytics & AI
+    "3-0": { // Q12: How data is used
+      1: { p1: "Create a list of standard monthly reports that are compiled manually.", p2: "Build a basic dashboard (e.g., Power BI) to automate standard retro reports.", p3: "Train analysts to use basic charts to describe what happened." },
+      2: { p1: "List reports where users ask 'why did this happen?' rather than just 'what happened?'.", p2: "Add drill-down capabilities to dashboards to inspect database records.", p3: "Train teams to perform diagnostic analysis on historical trends." },
+      3: { p1: "Identify which asset failures could be anticipated using simple statistics.", p2: "Implement basic trend forecasting to predict failure rates or renewal needs.", p3: "Develop predictive maintenance pilots for high-priority assets." },
+      4: { p1: "Verify prediction accuracy of early forecasting models.", p2: "Deploy predictive models to guide maintenance schedules across the asset base.", p3: "Incorporate cost data to recommend optimal intervention times." },
+      5: { p1: "Audit accuracy and drift of operational AI models.", p2: "Deploy prescriptive models that suggest optimal actions under constraint.", p3: "Automate action execution based on model recommendations with safety bounds." }
+    },
+    "3-1": { // Q13: Basis for decisions
+      1: { p1: "Identify 3 key decisions made solely on gut feel where data exists.", p2: "Present simple data charts at decision meetings to establish a baseline.", p3: "Require new proposals to include basic data charts." },
+      2: { p1: "Document cases where data was ignored in favor of gut feeling.", p2: "Create decision scorecards template that require data inputs.", p3: "Train team leads to interpret basic data charts and stats." },
+      3: { p1: "Identify decisions where data is incomplete or arrives too late.", p2: "Set up dashboards to provide decision-makers with recent data.", p3: "Establish a process where key project milestones require data validation." },
+      4: { p1: "Audit how decisions align with data recommendations.", p2: "Integrate predictive model outputs directly into executive planning reviews.", p3: "Train leadership on how to use probabilistic forecasts in decision-making." },
+      5: { p1: "Evaluate the financial impact of data-driven decisions.", p2: "Embed automated data checks and model recommendations into every decision level.", p3: "Run continuous A/B tests to measure decision outcomes." }
+    },
+    "3-2": { // Q14: AI-driven decisions
+      1: { p1: "Differentiate chatbot tasks (emails) from operational AI opportunities.", p2: "Identify a manual scheduling process that could benefit from automation.", p3: "Draft a pilot scope for an algorithm to recommend maintenance schedules." },
+      2: { p1: "Review operational data quality to see if it can support a pilot.", p2: "Build a prototype model to recommend optimal job scheduling.", p3: "Run a parallel test comparing model recommendations with human scheduling." },
+      3: { p1: "Address user trust and interface barriers in the scheduling pilot.", p2: "Deploy the recommendation model to production for human approval.", p3: "Train operators to interpret and trust the algorithm's suggestions." },
+      4: { p1: "Track operator adoption and override rates for the algorithm.", p2: "Expand model coverage to other core operational decisions.", p3: "Automate scheduling loops where human overrides are low." },
+      5: { p1: "Monitor model drift and performance automatically.", p2: "Deploy autonomous closed-loop AI systems (e.g. automated dispatch).", p3: "Implement real-time safety shut-offs and manual override protocols." }
+    },
+    // Dimension 5: People & Skills
+    "4-0": { // Q15: Engineering & analytics skills
+      1: { p1: "Identify one analyst who wants to learn database coding (SQL).", p2: "Provide basic SQL or data analysis training to key staff.", p3: "Hire a junior data analyst to assist with building reports." },
+      2: { p1: "List manual data prep steps that take analysts the most time.", p2: "Train analysts in data modeling and database management.", p3: "Bring in external specialists to build initial automated pipelines." },
+      3: { p1: "Identify pipeline gaps where data is manually cleaned.", p2: "Train developers in data engineering frameworks (ETL) and version control.", p3: "Establish a dedicated data engineering role within the team." },
+      4: { p1: "Audit skill levels against upcoming data project needs.", p2: "Create a formal training path for data engineering and data science.", p3: "Deploy advanced analytical methods (machine learning) internally." },
+      5: { p1: "Establish a research lab to test new data engineering tools.", p2: "Implement advanced MLOps and automated testing pipelines.", p3: "Mentor teams and share frameworks with the wider sector." }
+    },
+    "4-1": { // Q16: Cloud & platform skills
+      1: { p1: "Ask IT for a list of active cloud or server configurations.", p2: "Train IT staff on basic cloud security and administration.", p3: "Use standard managed services to reduce server setup needs." },
+      2: { p1: "Document manual server setup tasks that delay projects.", p2: "Train administrators on cloud platform console tools.", p3: "Bring in external specialists to set up template cloud databases." },
+      3: { p1: "Identify platform security gaps (e.g., shared keys).", p2: "Train team on Infrastructure as Code (IaC) templates.", p3: "Automate server deployment using standard templates." },
+      4: { p1: "Verify pipeline automation speeds for server setups.", p2: "Establish dedicated platform engineering roles to manage environments.", p3: "Deploy automated platform scanning and security tools." },
+      5: { p1: "Review cost efficiencies of your automated platforms.", p2: "Deploy fully automated CI/CD pipelines for platform setup.", p3: "Implement automated platform compliance testing." }
+    },
+    "4-2": { // Q17: In-house delivery capability
+      1: { p1: "List the AI projects currently blocked by lack of capacity.", p2: "Identify external specialists who can deliver a quick-win pilot.", p3: "Create a 1-year delivery plan for AI projects." },
+      2: { p1: "Document project delays caused by relying on general IT staff.", p2: "Hire a dedicated product owner or project manager for AI.", p3: "Form a small internal AI team with key specialists." },
+      3: { p1: "Identify key-person dependency risks in the AI team.", p2: "Hire additional engineers to cover core database operations.", p3: "Establish a standard playbook for running AI projects." },
+      4: { p1: "Check delivery speed of internal AI squads.", p2: "Deploy multidisciplinary AI squads (engineering, science, design).", p3: "Establish strategic support to scale delivery on demand." },
+      5: { p1: "Review standard project delivery costs and ROI.", p2: "Establish an AI center of excellence to scale internal skills.", p3: "Actively contribute open-source tools to the wider community." }
+    },
+    // Dimension 6: Strategy
+    "5-0": { // Q18: Investment in data & AI
+      1: { p1: "Estimate the business cost of manual spreadsheet errors.", p2: "Secure small project funding for a high-value pilot.", p3: "Demonstrate pilot savings to secure a regular budget." },
+      2: { p1: "Document the business case for automating monthly reports.", p2: "Establish a dedicated annual data and AI project budget.", p3: "Align project budgets with specific operational savings." },
+      3: { p1: "Identify strategic priorities that require data investment.", p2: "Secure multi-year funding for data infrastructure projects.", p3: "Create an investment review board to approve data spend." },
+      4: { p1: "Track budget spending against project delivery milestones.", p2: "Set data and AI as protected infrastructure line items.", p3: "Fund a continuous portfolio of AI programs linked to corporate goals." },
+      5: { p1: "Measure the long-term ROI of infrastructure spend.", p2: "Implement flexible funding models that adjust to AI performance.", p3: "Fund systemic research and development in new AI tech." }
+    },
+    "5-1": { // Q19: Strategy & leadership backing
+      1: { p1: "Find one executive interested in data-driven operations.", p2: "Draft a basic 1-page data vision statement for the board.", p3: "Present simple AI use cases to leadership." },
+      2: { p1: "Identify where lack of leadership alignment delays projects.", p2: "Draft a comprehensive data and AI strategy document.", p3: "Establish executive sponsorship for core data projects." },
+      3: { p1: "Align strategy with operational realities (ask team heads).", p2: "Get formal board approval for the data and AI strategy.", p3: "Embed data strategy metrics into executive reviews." },
+      4: { p1: "Verify strategy progress against milestones.", p2: "Set data strategy as a standing board agenda item.", p3: "Include data strategy in annual company reports." },
+      5: { p1: "Review strategy relevance against market shifts.", p2: "Embed AI and data strategy directly into corporate vision.", p3: "Champion sector-wide standards at the board level." }
+    },
+    "5-2": { // Q20: Responsible, safe & secure AI
+      1: { p1: "List the risks of uploading company data to public chatbots.", p2: "Publish a simple policy on appropriate chatbot use.", p3: "Train staff on basic data privacy rules." },
+      2: { p1: "Identify systems where AI or data could violate privacy rules.", p2: "Draft comprehensive data protection and security policies.", p3: "Establish review steps for data usage in new projects." },
+      3: { p1: "Check project compliance with privacy laws (GDPR).", p2: "Draft formal guidelines for responsible AI and model ethics.", p3: "Establish an AI risk assessment process for all pilots." },
+      4: { p1: "Review automated security logs for model inputs.", p2: "Embed security and ethics reviews into deployment pipelines.", p3: "Create a formal AI assurance and compliance group." },
+      5: { p1: "Audit compliance with ethical AI standards.", p2: "Automate security and bias checking across live AI models.", p3: "Publish assurance reports for trust and compliance." }
+    },
+    "5-3": { // Q21: Measuring value / ROI
+      1: { p1: "List the time saved by automating one report.", p2: "Document the hours saved on manual tasks in a ledger.", p3: "Estimate basic cost savings from early pilots." },
+      2: { p1: "Define what 'success' looks like for current data projects.", p2: "Create simple value metrics (e.g. hours saved, errors reduced).", p3: "Publish a monthly value report for leadership." },
+      3: { p1: "Identify projects where ROI is difficult to calculate.", p2: "Establish a formal ROI measurement framework for all projects.", p3: "Compare project costs against measured business savings." },
+      4: { p1: "Review value metrics against business targets.", p2: "Track cumulative financial savings from all data initiatives.", p3: "Link project funding directly to measured value delivery." },
+      5: { p1: "Audit the long-term asset value of data platforms.", p2: "Implement real-time value dashboards for all systems.", p3: "Use value metrics to optimize the strategic project portfolio." }
+    }
+  };
+
+  // ---- build flat question list & inject section screens ----
+  var flat = [];
+  DIMENSIONS.forEach(function(d){ d.questions.forEach(function(q){ q.dim=d.id; flat.push(q); }); });
+  var TOTAL_Q = flat.length;
+
+  var answers = {}; // key "dimIdx-qIdx" -> level (1..5)
+  var sectionsHost = document.getElementById("sections");
+  var qCounter = 0;
+
+  DIMENSIONS.forEach(function(dim, di){
+    var sec = document.createElement("section");
+    sec.className = "screen card";
+    sec.setAttribute("data-screen","section");
+    sec.setAttribute("data-di", di);
+    sec.id = "screen-sec-"+di;
+
+    var html = '<span class="eyebrow">Section '+(di+1)+' of '+DIMENSIONS.length+'</span>';
+    html += '<h2 class="section-title">'+dim.name+'</h2>';
+    html += '<p class="section-sub">'+dim.intro+'</p>';
+
+    dim.questions.forEach(function(q, qi){
+      qCounter++;
+      var gnum = qCounter;
+      html += '<div class="q" data-qkey="'+di+'-'+qi+'">';
+      html += '<div class="qnum">QUESTION '+gnum+' OF '+TOTAL_Q+'</div>';
+      html += '<div class="qtext">'+q.text+'</div>';
+      html += '<div class="opts">';
+      q.levels.forEach(function(lv, li){
+        var level = li+1;
+        var name = "q-"+di+"-"+qi;
+        html += '<label class="opt" data-level="'+level+'">'
+              + '<input type="radio" name="'+name+'" value="'+level+'">'
+              + '<span class="lvl">Level '+level+'</span>'
+              + '<span class="otext">'+lv+'</span>'
+              + '</label>';
+      });
+      html += '</div></div>';
+    });
+
+    html += '<div class="nudge" id="nudge-'+di+'">Please answer every question to continue.</div>';
+    html += '<div class="nav">'
+          + '<button class="btn btn-ghost" data-act="back">← Back</button>'
+          + '<button class="btn btn-primary" data-act="next">'+(di===DIMENSIONS.length-1?'See my results →':'Next section →')+'</button>'
+          + '</div>';
+
+    sec.innerHTML = html;
+    sectionsHost.appendChild(sec);
+  });
+
+  // ---- selection handling ----
+  sectionsHost.addEventListener("change", function(e){
+    var input = e.target;
+    if(input && input.type==="radio"){
+      var label = input.closest(".opt");
+      var group = label.parentNode;
+      Array.prototype.forEach.call(group.querySelectorAll(".opt"), function(o){ o.classList.remove("selected"); });
+      label.classList.add("selected");
+      var qkey = label.closest(".q").getAttribute("data-qkey");
+      answers[qkey] = parseInt(input.value,10);
+      var di = label.closest("[data-di]").getAttribute("data-di");
+      var nudge = document.getElementById("nudge-"+di);
+      if(nudge) nudge.classList.remove("show");
+    }
+  });
+
+  // ---- navigation ----
+  var order = ["intro"].concat(DIMENSIONS.map(function(_,i){return "sec-"+i;})).concat(["results"]);
+  var pos = 0;
+
+  var progressShell = document.getElementById("progressShell");
+  var progressFill = document.getElementById("progressFill");
+  var progressLabel = document.getElementById("progressLabel");
+  var progressPct = document.getElementById("progressPct");
+
+  function screenEl(key){
+    if(key==="intro") return document.getElementById("screen-intro");
+    if(key==="results") return document.getElementById("screen-results");
+    return document.getElementById("screen-"+key);
+  }
+
+  function show(key){
+    Array.prototype.forEach.call(document.querySelectorAll(".screen"), function(s){ s.classList.remove("active"); });
+    screenEl(key).classList.add("active");
+    window.scrollTo({top:0, behavior:"smooth"});
+
+    var mainWrap = document.getElementById("mainWrap");
+    if(mainWrap) {
+      if(key === "results") {
+        mainWrap.classList.add("wide");
+      } else {
+        mainWrap.classList.remove("wide");
+      }
+    }
+
+    if(key==="intro" || key==="results"){
+      progressShell.classList.remove("show");
+    } else {
+      progressShell.classList.add("show");
+      var si = parseInt(key.split("-")[1],10);
+      var answered = countAnsweredUpTo(si);
+      var pct = Math.round((answered/TOTAL_Q)*100);
+      progressFill.style.width = pct+"%";
+      progressLabel.textContent = "Section "+(si+1)+" of "+DIMENSIONS.length+" · "+DIMENSIONS[si].name;
+      progressPct.textContent = pct+"%";
+    }
+  }
+
+  function countAnsweredUpTo(sectionIdx){
+    var c=0;
+    DIMENSIONS.forEach(function(d,di){
+      if(di<=sectionIdx){
+        d.questions.forEach(function(q,qi){ if(answers[di+"-"+qi]) c++; });
+      }
+    });
+    return c;
+  }
+
+  function sectionComplete(di){
+    return DIMENSIONS[di].questions.every(function(q,qi){ return !!answers[di+"-"+qi]; });
+  }
+
+  document.getElementById("startBtn").addEventListener("click", function(){
+    var org = document.getElementById("org").value.trim();
+    if(!org){
+      document.getElementById("orgNudge").classList.add("show");
+      document.getElementById("org").focus();
+      return;
+    }
+    document.getElementById("orgNudge").classList.remove("show");
+    pos = 1; show(order[pos]);
+  });
+
+  document.getElementById("org").addEventListener("input", function(){
+    if(this.value.trim()) document.getElementById("orgNudge").classList.remove("show");
+  });
+
+  sectionsHost.addEventListener("click", function(e){
+    var btn = e.target.closest("button[data-act]");
+    if(!btn) return;
+    var act = btn.getAttribute("data-act");
+    if(act==="back"){
+      pos = Math.max(0, pos-1);
+      show(order[pos]);
+    } else if(act==="next"){
+      var di = parseInt(btn.closest("[data-di]").getAttribute("data-di"),10);
+      if(!sectionComplete(di)){
+        document.getElementById("nudge-"+di).classList.add("show");
+        return;
+      }
+      pos = pos+1;
+      if(order[pos]==="results"){ buildResults(); }
+      show(order[pos]);
+    }
+  });
+
+  // ---- results ----
+  function dimScore(dim, di){
+    var sum=0, n=0;
+    dim.questions.forEach(function(q,qi){ var a=answers[di+"-"+qi]; if(a){sum+=a;n++;} });
+    return n? (sum/n) : 0;
+  }
+
+  var RESULT = null;
+
+  function buildResults(){
+    var perDim = DIMENSIONS.map(function(d,di){
+      return { id:d.id, name:d.name, label:d.label, score:dimScore(d,di), benchmark:d.benchmark };
+    });
+    var allSum=0, allN=0;
+    Object.keys(answers).forEach(function(k){ allSum+=answers[k]; allN++; });
+    var overall = allN? allSum/allN : 0;
+
+    var bSum=0, bN=0;
+    DIMENSIONS.forEach(function(d){ d.questions.forEach(function(){ bSum+=d.benchmark; bN++; }); });
+    var overallBench = bSum/bN;
+
+    var stage = Math.min(5, Math.max(1, Math.round(overall)));
+
+    RESULT = { perDim:perDim, overall:overall, overallBench:overallBench, stage:stage };
+
+    // hero
+    var org = document.getElementById("org").value.trim();
+    document.getElementById("resOrgTitle").textContent = org + " — your AI maturity snapshot";
+    var name = document.getElementById("name").value.trim();
+    var sector = document.getElementById("sector").value;
+    var metaBits = [];
+    if(sector) metaBits.push(sector);
+    if(name) metaBits.push(name);
+    metaBits.push(new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"}));
+    document.getElementById("resMeta").textContent = metaBits.join(" · ");
+
+    document.getElementById("ringNum").textContent = overall.toFixed(1);
+    var circ = 2*Math.PI*64;
+    var frac = overall/5;
+    document.getElementById("ringArc").setAttribute("stroke-dasharray", (circ*frac).toFixed(1)+" "+circ.toFixed(1));
+    document.getElementById("stageBadge").textContent = "Stage "+stage+" of 5";
+    document.getElementById("stageName").textContent = STAGES[stage].name;
+    document.getElementById("stageDesc").textContent = STAGES[stage].desc;
+
+    document.getElementById("radar").innerHTML = buildRadar(perDim);
+    buildDimBars(perDim);
+    buildFocus();
+  }
+
+  function buildRadar(perDim){
+    var cx=190, cy=180, R=125, N=perDim.length;
+    function pt(i, val){
+      var ang = -Math.PI/2 + i*(2*Math.PI/N);
+      var r = R*(val/5);
+      return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)];
+    }
+    var svg = '<svg width="380" height="360" viewBox="0 0 380 360" role="img" aria-label="Radar chart of maturity scores">';
+    // rings
+    for(var lv=1; lv<=5; lv++){
+      var pts=[];
+      for(var i=0;i<N;i++){ pts.push(pt(i,lv).map(function(v){return v.toFixed(1);}).join(",")); }
+      svg += '<polygon points="'+pts.join(" ")+'" fill="none" stroke="var(--track)" stroke-width="1"></polygon>';
+    }
+    // axes + labels
+    for(var i2=0;i2<N;i2++){
+      var edge = pt(i2,5);
+      svg += '<line x1="'+cx+'" y1="'+cy+'" x2="'+edge[0].toFixed(1)+'" y2="'+edge[1].toFixed(1)+'" stroke="var(--border)" stroke-width="1"></line>';
+      var lp = pt(i2,5.75);
+      var ang = -Math.PI/2 + i2*(2*Math.PI/N);
+      var anchor = "middle";
+      if(Math.cos(ang) > 0.3) anchor="start";
+      else if(Math.cos(ang) < -0.3) anchor="end";
+      var dy = Math.sin(ang) > 0.3 ? 10 : (Math.sin(ang) < -0.3 ? -2 : 4);
+      svg += '<text x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy).toFixed(1)+'" text-anchor="'+anchor+'" font-size="11.5" font-weight="600" fill="var(--muted)">'+perDim[i2].label+'</text>';
+    }
+    // benchmark polygon
+    var bpts=[];
+    for(var b=0;b<N;b++){ bpts.push(pt(b,perDim[b].benchmark).map(function(v){return v.toFixed(1);}).join(",")); }
+    svg += '<polygon points="'+bpts.join(" ")+'" fill="none" stroke="var(--teal)" stroke-width="2" stroke-dasharray="5 4"></polygon>';
+    // user polygon
+    var upts=[];
+    for(var u=0;u<N;u++){ upts.push(pt(u,perDim[u].score).map(function(v){return v.toFixed(1);}).join(",")); }
+    svg += '<polygon points="'+upts.join(" ")+'" fill="rgba(11,98,181,.18)" stroke="var(--blue)" stroke-width="2.5"></polygon>';
+    for(var d2=0;d2<N;d2++){ var dp=pt(d2,perDim[d2].score); svg += '<circle cx="'+dp[0].toFixed(1)+'" cy="'+dp[1].toFixed(1)+'" r="3.5" fill="var(--blue)"></circle>'; }
+    svg += '</svg>';
+    return svg;
+  }
+
+  function buildDimBars(perDim){
+    var host = document.getElementById("dimBars");
+    host.innerHTML = "";
+    perDim.forEach(function(d){
+      var row = document.createElement("div");
+      row.className = "dim-row";
+      var pct = (d.score/5*100).toFixed(0);
+      var bpct = (d.benchmark/5*100).toFixed(1);
+      row.innerHTML =
+        '<div class="dim-head"><span class="name">'+d.name+'</span>'
+        +'<span class="val"><b>'+d.score.toFixed(1)+'</b> / 5 &nbsp;·&nbsp; peer '+d.benchmark.toFixed(1)+'</span></div>'
+        +'<div class="dtrack"><div class="dfill" style="width:'+pct+'%"></div>'
+        +'<div class="dbench" style="left:'+bpct+'%"></div></div>';
+      host.appendChild(row);
+    });
+  }
+
+  function buildFocus(){
+    var host = document.getElementById("focusList");
+    host.innerHTML = "";
+
+    // Build the grid container
+    var grid = document.createElement("div");
+    grid.style.display = "grid";
+    grid.style.gridTemplateColumns = "repeat(3, 1fr)";
+    grid.style.gap = "20px";
+    grid.style.width = "100%";
+    grid.style.marginTop = "16px";
+
+    var phases = [
+      { key: "p1", name: "Phase 1 - Quick Wins", color: "var(--warn)" },
+      { key: "p2", name: "Phase 2 - Build Foundations", color: "var(--blue)" },
+      { key: "p3", name: "Phase 3 - Scale & Optimise", color: "var(--good)" }
+    ];
+
+    phases.forEach(function(phase){
+      var col = document.createElement("div");
+      col.style.background = "var(--surface-2)";
+      col.style.border = "1px solid var(--border)";
+      col.style.borderRadius = "var(--radius)";
+      col.style.padding = "20px";
+      col.style.display = "flex";
+      col.style.flexDirection = "column";
+
+      var header = '<h5 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; color: ' + phase.color + '; border-bottom: 2px solid ' + phase.color + '; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">' + phase.name + '</h5>';
+      
+      var colContent = '';
+      DIMENSIONS.forEach(function(dim, di){
+        colContent += '<div style="margin-bottom: 18px;">';
+        colContent += '<div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 10px; letter-spacing: 0.03em;">' + dim.name + '</div>';
+        
+        dim.questions.forEach(function(q, qi){
+          var key = di + "-" + qi;
+          var score = answers[key] || 1;
+          var rec = ROADMAP_MAPPING[key][score];
+          var actionText = rec[phase.key];
+          
+          colContent += '<div style="margin-bottom: 12px; padding-left: 8px; border-left: 2px solid var(--border);">';
+          colContent += '<div style="font-weight: 650; font-size: 13px; color: var(--text);">' + q.short + ' <span style="font-weight: 400; color: var(--muted); font-size: 11px;">(Score: ' + score + '/5)</span></div>';
+          colContent += '<p style="margin: 3px 0 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.45;">' + actionText + '</p>';
+          colContent += '</div>';
+        });
+        
+        colContent += '</div>';
+      });
+
+      col.innerHTML = header + colContent;
+      grid.appendChild(col);
+    });
+
+    host.appendChild(grid);
+  }
+
+  // ---- email ----
+  document.getElementById("emailBtn").addEventListener("click", function(){
+    if(!RESULT) return;
+    var org = document.getElementById("org").value.trim() || "(not provided)";
+    var name = document.getElementById("name").value.trim();
+    var email = document.getElementById("email").value.trim();
+    var sector = document.getElementById("sector").value || "(not specified)";
+    var date = new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+
+    var L = [];
+    L.push("AI MATURITY ASSESSMENT — RESULTS");
+    L.push("GHD Data & Insights");
+    L.push("");
+    L.push("Organisation: "+org);
+    L.push("Sector: "+sector);
+    L.push("Respondent: "+(name||"(not provided)")+(email?" <"+email+">":""));
+    L.push("Date: "+date);
+    L.push("");
+    L.push("OVERALL MATURITY: Stage "+RESULT.stage+" of 5 — "+STAGES[RESULT.stage].name+"  (score "+RESULT.overall.toFixed(1)+"/5)");
+    L.push("Indicative peer benchmark: "+RESULT.overallBench.toFixed(1)+"/5");
+    L.push("");
+    L.push("SCORES BY FOUNDATION (your score / indicative peer):");
+    RESULT.perDim.forEach(function(d){
+      L.push("- "+d.name+": "+d.score.toFixed(1)+"/5  (peer "+d.benchmark.toFixed(1)+"/5)");
+    });
+    L.push("");
+    
+    L.push("ROADMAP BY SECTION:");
+    DIMENSIONS.forEach(function(dim, di){
+      L.push("=== " + dim.name.toUpperCase() + " ===");
+      dim.questions.forEach(function(q, qi){
+        var key = di + "-" + qi;
+        var score = answers[key] || 1;
+        var rec = ROADMAP_MAPPING[key][score];
+        L.push("- " + q.short + " (Score: " + score + "/5)");
+        L.push("  * Phase 1 - Quick Wins: " + rec.p1);
+        L.push("  * Phase 2 - Build Foundations: " + rec.p2);
+        L.push("  * Phase 3 - Scale & Optimise: " + rec.p3);
+      });
+      L.push("");
+    });
+
+    L.push("DETAILED RESPONSES:");
+    var gn=0;
+    DIMENSIONS.forEach(function(d,di){
+      d.questions.forEach(function(q,qi){
+        gn++;
+        var a = answers[di+"-"+qi] || 0;
+        L.push(gn+". "+q.short+": Level "+a+"/5");
+      });
+    });
+    L.push("");
+    L.push("— Generated with the GHD Data & Insights AI Maturity Assessment.");
+
+    var subject = "AI Maturity Assessment — "+org;
+    var body = L.join("\r\n");
+    var href = "mailto:dandai@ghd.com?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+    window.location.href = href;
+    document.getElementById("sentNote").classList.add("show");
+  });
+
+  document.getElementById("printBtn").addEventListener("click", function(){ window.print(); });
+
+  document.getElementById("restartBtn").addEventListener("click", function(){
+    answers = {};
+    Array.prototype.forEach.call(document.querySelectorAll(".opt.selected"), function(o){ o.classList.remove("selected"); });
+    Array.prototype.forEach.call(document.querySelectorAll("input[type=radio]"), function(r){ r.checked=false; });
+    document.getElementById("sentNote").classList.remove("show");
+    pos = 0; show(order[0]);
+  });
+
+})();
+</script>
+</body>
 </html>
