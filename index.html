@@ -453,11 +453,13 @@
 
 
     <div class="result-actions">
-      <button class="btn btn-teal" id="emailBtn">✉ Email my results to GHD</button>
+      <button class="btn btn-teal" id="emailBtn">✉ Email via Outlook Web</button>
+      <button class="btn btn-teal" id="copyBtn">📋 Copy results to clipboard</button>
       <button class="btn btn-ghost" id="printBtn">Print / save as PDF</button>
       <button class="btn btn-ghost" id="restartBtn">Start again</button>
     </div>
-    <div class="sent-note" id="sentNote">Your email app should now be open with your results ready to send to dandai@ghd.com. If nothing opened, use Print / save as PDF instead.</div>
+    <div class="sent-note" id="sentNote">Outlook Web should now be open in a new tab. If not, please use the Copy button above.</div>
+    <div class="sent-note" id="copyNote">Results copied to clipboard! You can now paste them into your email client.</div>
 
     <p class="disclaimer">The peer benchmark shown is indicative — a typical maturity range GHD observes across UK infrastructure organisations — and is provided to prompt discussion, not as a precise industry statistic. Your responses stay in your browser until you choose to email them.</p>
   </section>
@@ -1181,9 +1183,8 @@
     host.appendChild(matrix);
   }
 
-  // ---- email ----
-  document.getElementById("emailBtn").addEventListener("click", function(){
-    if(!RESULT) return;
+  // ---- build email body ----
+  function buildEmailBody(){
     var org = document.getElementById("org").value.trim() || "(not provided)";
     var name = document.getElementById("name").value.trim();
     var email = document.getElementById("email").value.trim();
@@ -1210,12 +1211,34 @@
     });
     L.push("");
     L.push("— Generated with the GHD Data & Insights AI Maturity Assessment.");
+    return L.join("\r\n");
+  }
 
+  // ---- email ----
+  document.getElementById("emailBtn").addEventListener("click", function(){
+    if(!RESULT) return;
+    var org = document.getElementById("org").value.trim() || "(not provided)";
     var subject = "AI Maturity Assessment — "+org;
-    var body = L.join("\r\n");
-    var href = "mailto:dandai@ghd.com?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
-    window.location.href = href;
+    var body = buildEmailBody();
+    var href = "https://outlook.office.com/mail/deeplink/compose?to=dandai@ghd.com&subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+    window.open(href, '_blank');
     document.getElementById("sentNote").classList.add("show");
+    document.getElementById("copyNote").classList.remove("show");
+  });
+
+  // ---- copy ----
+  document.getElementById("copyBtn").addEventListener("click", function(){
+    if(!RESULT) return;
+    var body = buildEmailBody();
+    navigator.clipboard.writeText(body).then(function(){
+      document.getElementById("copyNote").classList.add("show");
+      document.getElementById("sentNote").classList.remove("show");
+      setTimeout(function(){
+        document.getElementById("copyNote").classList.remove("show");
+      }, 5000);
+    }).catch(function(err){
+      alert("Failed to copy results: " + err);
+    });
   });
 
   document.getElementById("printBtn").addEventListener("click", function(){ window.print(); });
@@ -1225,6 +1248,7 @@
     Array.prototype.forEach.call(document.querySelectorAll(".opt.selected"), function(o){ o.classList.remove("selected"); });
     Array.prototype.forEach.call(document.querySelectorAll("input[type=radio]"), function(r){ r.checked=false; });
     document.getElementById("sentNote").classList.remove("show");
+    document.getElementById("copyNote").classList.remove("show");
     pos = 0; show(order[0]);
   });
 
