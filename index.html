@@ -329,6 +329,20 @@
   .sent-note{font-size:13px;color:var(--good);font-weight:600;margin-top:12px;display:none}
   .sent-note.show{display:block}
 
+  #roadmapPanel {
+    display: none;
+  }
+  .roadmap-disclaimer {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    margin: 0 0 16px;
+    padding: 8px 12px;
+    background: var(--surface-2);
+    border-left: 3px solid var(--teal);
+    border-radius: 4px;
+  }
+
   footer.foot{text-align:center;color:var(--muted);font-size:12.5px;margin-top:30px}
 
   @media print{
@@ -359,6 +373,12 @@
       grid-column: span 4 !important;
     }
     .matrix-action-cell::before {
+      display: none !important;
+    }
+    #roadmapPanel {
+      display: block !important;
+    }
+    #roadmapNudgePanel {
       display: none !important;
     }
   }
@@ -469,9 +489,15 @@
       <div id="dimBars"></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="roadmapNudgePanel">
+      <h4>Where to focus first</h4>
+      <p class="panel-sub">Your roadmap will appear once you have emailed your results.</p>
+    </div>
+
+    <div class="panel" id="roadmapPanel">
       <h4>Where to focus first</h4>
       <p class="panel-sub">Based on your lowest-scoring areas — the biggest opportunities to build momentum.</p>
+      <p class="roadmap-disclaimer">These steps are indicative and are automatically generated. Please contact the GHD team if you'd like a more tailored roadmap.</p>
       <div id="focusList"></div>
     </div>
 
@@ -1225,7 +1251,21 @@
     L.push("Respondent: "+(name||"(not provided)")+(email?" <"+email+">":""));
     L.push("Date: "+date);
     L.push("");
-    L.push("RESPONSES:");
+
+    if(RESULT) {
+      L.push("HEADLINE FIGURES");
+      L.push("Overall Score: " + RESULT.overall.toFixed(1) + " / 5");
+      var stageName = STAGES[RESULT.stage] ? STAGES[RESULT.stage].name : "";
+      L.push("Maturity Stage: Stage " + RESULT.stage + " — " + stageName);
+      L.push("");
+      L.push("Foundation Scores:");
+      RESULT.perDim.forEach(function(d){
+        L.push("- " + d.name + ": " + d.score.toFixed(1) + " / 5 (Peer Benchmark: " + d.benchmark.toFixed(1) + ")");
+      });
+      L.push("");
+    }
+
+    L.push("DETAILED RESPONSES:");
     var gn=0;
     DIMENSIONS.forEach(function(d,di){
       d.questions.forEach(function(q,qi){
