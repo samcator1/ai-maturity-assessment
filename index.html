@@ -346,11 +346,15 @@
   footer.foot{text-align:center;color:var(--muted);font-size:12.5px;margin-top:30px}
 
   @media print{
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
     @page {
       size: landscape;
       margin: 12mm;
     }
-    header.top{background:var(--navy) !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    header.top{background:var(--navy) !important;}
     .nav,.result-actions,.progress-shell{display:none !important}
     .card{box-shadow:none !important;border:none !important;padding:0 !important;margin:0 !important}
     body{background:#fff !important;color:#000 !important}
