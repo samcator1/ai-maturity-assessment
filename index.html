@@ -494,15 +494,6 @@
       <p class="panel-sub">Your roadmap will appear once you have emailed your results.</p>
     </div>
 
-    <div class="panel" id="roadmapPanel">
-      <h4>Where to focus first</h4>
-      <p class="panel-sub">Based on your lowest-scoring areas — the biggest opportunities to build momentum.</p>
-      <p class="roadmap-disclaimer">These steps are indicative and are automatically generated. Please contact the GHD team if you'd like a more tailored roadmap.</p>
-      <div id="focusList"></div>
-    </div>
-
-
-
     <div class="result-actions">
       <button class="btn btn-teal" id="emailBtn">✉ Email via Outlook Web</button>
       <button class="btn btn-teal" id="copyBtn">📋 Copy results to clipboard</button>
@@ -511,6 +502,13 @@
     </div>
     <div class="sent-note" id="sentNote">Outlook Web should now be open in a new tab. If not, please use the Copy button above.</div>
     <div class="sent-note" id="copyNote">Results copied to clipboard! You can now paste them into your email client.</div>
+
+    <div class="panel" id="roadmapPanel">
+      <h4>Where to focus first</h4>
+      <p class="panel-sub">Based on your lowest-scoring areas — the biggest opportunities to build momentum.</p>
+      <p class="roadmap-disclaimer">These steps are indicative and are automatically generated. Please contact the GHD team if you'd like a more tailored roadmap.</p>
+      <div id="focusList"></div>
+    </div>
 
     <p class="disclaimer">The peer benchmark shown is indicative — a typical maturity range GHD observes across UK infrastructure organisations — and is provided to prompt discussion, not as a precise industry statistic. Your responses stay in your browser until you choose to email them.</p>
   </section>
@@ -1303,6 +1301,8 @@
     document.getElementById("sentNote").classList.add("show");
     document.getElementById("copyNote").classList.remove("show");
     document.getElementById("printBtn").style.display = "inline-block";
+    document.getElementById("roadmapPanel").style.display = "block";
+    document.getElementById("roadmapNudgePanel").style.display = "none";
   });
 
   // ---- copy ----
@@ -1329,6 +1329,8 @@
     document.getElementById("sentNote").classList.remove("show");
     document.getElementById("copyNote").classList.remove("show");
     document.getElementById("printBtn").style.display = "none";
+    document.getElementById("roadmapPanel").style.display = "";
+    document.getElementById("roadmapNudgePanel").style.display = "";
     pos = 0; show(order[0]);
   });
 
