@@ -1235,7 +1235,7 @@
   }
 
   // ---- build email body ----
-  function buildEmailBody(){
+  function buildEmailBody(isForUrl){
     var org = document.getElementById("org").value.trim() || "(not provided)";
     var name = document.getElementById("name").value.trim();
     var email = document.getElementById("email").value.trim();
@@ -1260,20 +1260,33 @@
       L.push("");
       L.push("Foundation Scores:");
       RESULT.perDim.forEach(function(d){
-        L.push("- " + d.name + ": " + d.score.toFixed(1) + " / 5 (Peer Benchmark: " + d.benchmark.toFixed(1) + ")");
+        var label = isForUrl ? d.label : d.name;
+        L.push("- " + label + ": " + d.score.toFixed(1) + " / 5 (Peer Benchmark: " + d.benchmark.toFixed(1) + ")");
       });
       L.push("");
     }
 
-    L.push("DETAILED RESPONSES:");
-    var gn=0;
-    DIMENSIONS.forEach(function(d,di){
-      d.questions.forEach(function(q,qi){
-        gn++;
-        var a = answers[di+"-"+qi] || 0;
-        L.push(gn+". "+q.short+": "+a);
+    if(isForUrl) {
+      var scoreList = [];
+      DIMENSIONS.forEach(function(d,di){
+        d.questions.forEach(function(q,qi){
+          var a = answers[di+"-"+qi] || 0;
+          scoreList.push(a);
+        });
       });
-    });
+      L.push("DETAILED RESPONSES (compact):");
+      L.push(scoreList.join(","));
+    } else {
+      L.push("DETAILED RESPONSES:");
+      var gn=0;
+      DIMENSIONS.forEach(function(d,di){
+        d.questions.forEach(function(q,qi){
+          gn++;
+          var a = answers[di+"-"+qi] || 0;
+          L.push(gn+". "+q.short+": "+a);
+        });
+      });
+    }
     L.push("");
     L.push("— Generated with the GHD Data & Insights AI Maturity Assessment.");
     return L.join("\r\n");
@@ -1284,7 +1297,7 @@
     if(!RESULT) return;
     var org = document.getElementById("org").value.trim() || "(not provided)";
     var subject = "AI Maturity Assessment — "+org;
-    var body = buildEmailBody();
+    var body = buildEmailBody(true);
     var href = "https://outlook.office.com/mail/deeplink/compose?to=dandai@ghd.com&subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
     window.open(href, '_blank');
     document.getElementById("sentNote").classList.add("show");
@@ -1295,7 +1308,7 @@
   // ---- copy ----
   document.getElementById("copyBtn").addEventListener("click", function(){
     if(!RESULT) return;
-    var body = buildEmailBody();
+    var body = buildEmailBody(false);
     navigator.clipboard.writeText(body).then(function(){
       document.getElementById("copyNote").classList.add("show");
       document.getElementById("sentNote").classList.remove("show");
