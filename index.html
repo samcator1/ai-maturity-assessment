@@ -548,14 +548,14 @@
             "We can spin up extra computing power (cloud or central servers) on demand for most projects with little friction.",
             "Computing power scales automatically and instantly to whatever a workload needs, and we only pay for what we use."
           ]},
-        { short:"Data access & security",
-          text:"How securely and easily can data be accessed by internal teams or authorized external organizations?",
+        { short:"Deploying new solutions",
+          text:"How easy and fast is it to build, launch, and share new data and cloud solutions (like data pipelines, dashboards, or web apps)?",
           levels:[
-            "Data sharing is entirely manual (e.g., emailing spreadsheets or copying to USBs).",
-            "Access requires slow, restrictive IT approvals or complex VPN setups that make collaboration difficult.",
-            "Standard access controls exist, but permissions are slow to set up and data sharing between departments is rare.",
-            "Secure, role-based controls allow smooth internal sharing and governed external access.",
-            "A modern, secure API-driven network allows authorized staff and software tools to access data instantly."
+            "We cannot build or share new data tools or dashboards; everything is done manually in offline spreadsheets.",
+            "It is a slow, manual process; launching a basic dashboard or pipeline requires custom setup and long wait times for IT approvals.",
+            "We can easily build simple dashboards, but deploying automated data flows (pipelines) or custom web apps takes weeks of manual work and complex approvals.",
+            "We can launch new dashboards, pipelines, and web apps relatively quickly using standard cloud environments and clear processes.",
+            "We can deploy new data solutions instantly; teams use automated templates to build, test, and release new pipelines or web apps in days."
           ]},
         { short:"Systems joined up",
           text:"How joined-up are your core systems (asset management, finance, GIS, maintenance, and so on)?",
@@ -782,12 +782,12 @@
       4: { p1: "Track server usage spikes to identify when resources are wasted or idle.", p2: "Migrate heavy modeling workloads to modern, flexible on-demand computing services.", p3: "Implement auto-scaling rules to shut down servers when runs complete." },
       5: { p1: "Perform a security audit on your dynamic computing resource access.", p2: "Refine auto-scaling configurations to optimize computation cost and run speeds.", p3: "Enable automated environment spin-ups for testing new data science models." }
     },
-    "0-2": { // Q3: Data access & security
-      1: { p1: "Stop sharing password-protected spreadsheets over public email; use basic shared drives.", p2: "Draft a basic access policy defining who is allowed to view key asset lists.", p3: "Set up simple user logins for your primary database instead of sharing a single account." },
-      2: { p1: "Identify which teams are currently bypassed by IT security due to VPN issues.", p2: "Configure standard role-based logins (e.g. Viewer vs. Editor) in your storage systems.", p3: "Streamline VPN access pathways for remote workers to reduce access friction." },
-      3: { p1: "Audit the list of active user permissions to remove old employees or contractors.", p2: "Implement single-sign-on (SSO) to sync database access with corporate emails.", p3: "Create a governed external sharing process to securely send data to trusted external organisations." },
-      4: { p1: "Identify manual steps in how data is requested and approved across departments.", p2: "Build secure, read-only data connections (APIs) for internal software systems.", p3: "Establish an API portal allowing governed external access to authorized organizations." },
-      5: { p1: "Review compliance reports for your data API endpoints.", p2: "Move to a full Zero-Trust security model where every system connection is verified.", p3: "Automate security logging and threat detection across all data access routes." }
+    "0-2": { // Q3: Deploying new solutions
+      1: { p1: "Identify the main barriers (skills or software licenses) preventing teams from creating simple dashboards.", p2: "Set up basic access to a shared dashboard tool (like Power BI or Tableau) for a pilot group.", p3: "Build one simple pilot dashboard to show the value of moving away from static spreadsheets." },
+      2: { p1: "Map out the steps and wait times currently required to get approvals and servers from IT.", p2: "Create a fast-track process with IT for hosting simple dashboards and data pipelines.", p3: "Train team members on how to use standard corporate platforms to share reports directly." },
+      3: { p1: "List the manual steps involved in moving data from sources into dashboards (pipelines).", p2: "Configure a standardized, secure cloud environment where developers can build and test pipelines.", p3: "Establish clear security guidelines for web applications to simplify corporate approval." },
+      4: { p1: "Identify bottlenecks in how changes and updates are pushed to live dashboards and web apps.", p2: "Introduce automated testing and deployment tools (CI/CD) to reduce manual launch checks.", p3: "Provide reusable templates for pipelines and web apps to accelerate development." },
+      5: { p1: "Review hosting costs and performance across all active data pipelines and web apps.", p2: "Implement automated monitoring to track server health and usage for all deployed apps.", p3: "Share your deployment templates and automation scripts with other parts of the business." }
     },
     "0-3": { // Q4: Systems joined up
       1: { p1: "List the main copy-paste steps required to move data from GIS to finance or maintenance.", p2: "Create standard spreadsheet templates so data format matches across teams.", p3: "Build simple automated file-transfer tasks to share records between key systems." },
