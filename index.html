@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>AI Maturity Assessment — GHD Data &amp; Insights</title>
+<title>AI Readiness Assessment — GHD Data &amp; Insights</title>
 <link rel="icon" type="image/x-icon" href="static/favicon.ico">
 <link rel="icon" type="image/svg+xml" href="static/icon.svg">
 <style>
@@ -395,7 +395,7 @@
       <img src="static/GHD_White.png" alt="GHD Logo" class="logo-img">
       <span class="unit">Data &amp; Insights</span>
     </div>
-    <h1>AI Maturity Assessment</h1>
+    <h1>AI Readiness Assessment</h1>
     <p>A quick, low-jargon way to gauge where your organisation stands on its data &amp; AI journey — and see how you compare with peers across UK infrastructure.</p>
   </div>
 </header>
@@ -409,7 +409,7 @@
   <!-- INTRO -->
   <section class="screen active card" id="screen-intro" data-screen="intro">
     <span class="eyebrow">About 5 minutes • 21 questions</span>
-    <p class="lead">This assessment is a conversation starter, not a technical audit. Answer as the person who knows the business — <strong>there are no wrong answers</strong>. At the end you'll get an instant maturity snapshot, a peer benchmark, and the priorities that would move you forward fastest.</p>
+    <p class="lead">This assessment is a conversation starter, not a technical audit. Answer as the person who knows the business — <strong>there are no wrong answers</strong>. At the end you'll get an instant readiness snapshot, a peer benchmark, and the priorities that would move you forward fastest.</p>
 
     <div class="field">
       <label for="org">Organisation name <span class="req">*</span></label>
@@ -456,7 +456,7 @@
   <!-- RESULTS -->
   <section class="screen card" id="screen-results" data-screen="results">
     <span class="eyebrow">Your results</span>
-    <h2 class="section-title" id="resOrgTitle">Your AI maturity snapshot</h2>
+    <h2 class="section-title" id="resOrgTitle">Your AI readiness snapshot</h2>
     <p class="section-sub" id="resMeta"></p>
 
     <div class="score-hero">
@@ -514,10 +514,10 @@
       <div id="focusList"></div>
     </div>
 
-    <p class="disclaimer">The peer benchmark shown is indicative — a typical maturity range GHD observes across UK infrastructure organisations — and is provided to prompt discussion, not as a precise industry statistic. Your responses stay in your browser until you choose to email them.</p>
+    <p class="disclaimer">The peer benchmark shown is indicative — a typical readiness range GHD observes across UK infrastructure organisations — and is provided to prompt discussion, not as a precise industry statistic. Your responses stay in your browser until you choose to email them.</p>
   </section>
 
-  <footer class="foot">GHD Data &amp; Insights · AI Maturity Assessment</footer>
+  <footer class="foot">GHD Data &amp; Insights · AI Readiness Assessment</footer>
 </div>
 
 <script>
@@ -1104,7 +1104,7 @@
 
     // hero
     var org = document.getElementById("org").value.trim();
-    document.getElementById("resOrgTitle").textContent = org + " — your AI maturity snapshot";
+    document.getElementById("resOrgTitle").textContent = org + " — your AI readiness snapshot";
     var name = document.getElementById("name").value.trim();
     var sector = document.getElementById("sector").value;
     var metaBits = [];
@@ -1133,7 +1133,7 @@
       var r = R*(val/5);
       return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)];
     }
-    var svg = '<svg width="520" height="380" viewBox="0 0 520 380" role="img" aria-label="Radar chart of maturity scores">';
+    var svg = '<svg width="520" height="380" viewBox="0 0 520 380" role="img" aria-label="Radar chart of readiness scores">';
     // rings
     for(var lv=1; lv<=5; lv++){
       var pts=[];
@@ -1245,7 +1245,7 @@
     var date = new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
 
     var L = [];
-    L.push("AI MATURITY ASSESSMENT — RESULTS");
+    L.push("AI READINESS ASSESSMENT — RESULTS");
     L.push("GHD Data & Insights");
     L.push("");
     L.push("Organisation: "+org);
@@ -1273,7 +1273,7 @@
         L.push("HEADLINE FIGURES");
         L.push("Overall Score: " + RESULT.overall.toFixed(1) + " / 5");
         var stageName = STAGES[RESULT.stage] ? STAGES[RESULT.stage].name : "";
-        L.push("Maturity Stage: Stage " + RESULT.stage + " — " + stageName);
+        L.push("Readiness Stage: Stage " + RESULT.stage + " — " + stageName);
         L.push("");
         L.push("Foundation Scores:");
         RESULT.perDim.forEach(function(d){
@@ -1293,7 +1293,7 @@
       });
     }
     L.push("");
-    L.push("— Generated with the GHD Data & Insights AI Maturity Assessment.");
+    L.push("— Generated with the GHD Data & Insights AI Readiness Assessment.");
     return L.join("\r\n");
   }
 
@@ -1301,7 +1301,7 @@
   document.getElementById("emailBtn").addEventListener("click", function(){
     if(!RESULT) return;
     var org = document.getElementById("org").value.trim() || "(not provided)";
-    var subject = "AI Maturity Assessment — "+org;
+    var subject = "AI Readiness Assessment — "+org;
     var body = buildEmailBody(true);
     var href = "https://outlook.office.com/mail/deeplink/compose?to=dandai@ghd.com&subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
     window.open(href, '_blank');
